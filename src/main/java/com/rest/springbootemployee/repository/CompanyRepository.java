@@ -46,4 +46,23 @@ public class CompanyRepository {
                 .limit(pageSize)
                 .collect(Collectors.toList());
     }
+
+    public List<Company> addCompany(Company company) {
+        companies.add(new Company(generateCompanyId(),
+                company.getCompanyName(),company.getEmployees()));
+        return companies;
+    }
+
+    private Integer generateCompanyId() {
+        return companies.stream()
+                .mapToInt(Company::getId)
+                .max()
+                .orElse(0) + 1;
+    }
+
+    public Company updateCompanyById(Integer id) {
+        Company updateCompany = findCompanyById(id);
+        updateCompany.updateCompanyName();
+        return updateCompany;
+    }
 }

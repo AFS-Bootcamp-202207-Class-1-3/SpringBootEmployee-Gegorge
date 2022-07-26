@@ -24,4 +24,12 @@ public class Company {
     public List<Employee> getEmployees() {
         return employees;
     }
+
+    public void setCompanyName(String companyName) {
+        this.companyName = companyName;
+    }
+
+    public void updateCompanyName() {
+        this.setCompanyName("OOIL");
+    }
 }
