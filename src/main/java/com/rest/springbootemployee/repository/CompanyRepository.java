@@ -65,4 +65,8 @@ public class CompanyRepository {
         updateCompany.updateCompanyName();
         return updateCompany;
     }
+
+    public void removeCompanyById(Integer id) {
+        companies.remove(findCompanyById(id));
+    }
 }
