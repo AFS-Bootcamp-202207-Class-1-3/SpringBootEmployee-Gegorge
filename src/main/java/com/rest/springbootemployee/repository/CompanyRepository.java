@@ -7,12 +7,13 @@ import org.springframework.stereotype.Repository;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Repository
 public class CompanyRepository {
-    private final List<Company> companies = new ArrayList<>();
-    private final List<Employee> OOCL_EMPLOYEES = new ArrayList<>();
-    private final List<Employee> IQAX_EMPLOYEES = new ArrayList<>();
+    private static final List<Company> companies = new ArrayList<>();
+    private static final List<Employee> OOCL_EMPLOYEES = new ArrayList<>();
+    private static final List<Employee> IQAX_EMPLOYEES = new ArrayList<>();
 
     public CompanyRepository() {
         OOCL_EMPLOYEES.add(new Employee(1,"George1",18,"male",180));
@@ -37,5 +38,12 @@ public class CompanyRepository {
 
     public List<Employee> findAllEmployeesByCompanyId(Integer id) {
         return findCompanyById(id).getEmployees();
+    }
+
+    public List<Company> findCompanyByPage(int page, int pageSize) {
+        return companies.stream()
+                .skip((long) (page - 1) * pageSize)
+                .limit(pageSize)
+                .collect(Collectors.toList());
     }
 }
