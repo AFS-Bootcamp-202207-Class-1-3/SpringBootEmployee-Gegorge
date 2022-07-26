@@ -5,6 +5,7 @@ import org.springframework.stereotype.Repository;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Repository
@@ -54,5 +55,16 @@ public class EmployeeRepository {
         Employee updateEmployee = findEmployeeById(id);
         updateEmployee.updateSalary(300);
         return updateEmployee;
+    }
+
+    public void deleteEmployeeById(Integer id) {
+        employees.remove(findEmployeeById(id));
+    }
+
+    public List<Employee> findEmployeeByPage(int page, int pageSize) {
+        return employees.stream()
+                .skip((long) (page - 1) * pageSize)
+                .limit(pageSize)
+                .collect(Collectors.toList());
     }
 }
