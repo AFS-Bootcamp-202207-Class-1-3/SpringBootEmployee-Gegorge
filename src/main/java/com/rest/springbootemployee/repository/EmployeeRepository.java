@@ -49,4 +49,10 @@ public class EmployeeRepository {
                 .max()
                 .orElse(0) + 1;
     }
+
+    public Employee updateEmployee(Integer id) {
+        Employee updateEmployee = findEmployeeById(id);
+        updateEmployee.updateSalary(300);
+        return updateEmployee;
+    }
 }

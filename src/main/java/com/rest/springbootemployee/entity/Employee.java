@@ -19,6 +19,10 @@ public class Employee {
         return id;
     }
 
+    public void setSalary(int salary) {
+        this.salary = salary;
+    }
+
     public String getName() {
         return name;
     }
@@ -33,5 +37,9 @@ public class Employee {
 
     public int getSalary() {
         return salary;
+    }
+
+    public void updateSalary(int salary) {
+        this.setSalary(salary);
     }
 }

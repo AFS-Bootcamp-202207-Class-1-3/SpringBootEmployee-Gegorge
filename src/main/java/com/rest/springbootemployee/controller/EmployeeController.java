@@ -3,6 +3,7 @@ package com.rest.springbootemployee.controller;
 import com.rest.springbootemployee.entity.Employee;
 import com.rest.springbootemployee.repository.EmployeeRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -27,7 +28,13 @@ public class EmployeeController {
     }
 
     @PostMapping
+    @ResponseStatus(HttpStatus.CREATED)
     public List<Employee> addEmployee(@RequestBody Employee employee) {
         return employeeRepository.addEmployee(employee);
+    }
+
+    @PutMapping(path = "/{id}")
+    public Employee updateEmployeeById(@PathVariable Integer id) {
+        return employeeRepository.updateEmployee(id);
     }
 }
