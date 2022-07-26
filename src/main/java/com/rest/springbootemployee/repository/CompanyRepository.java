@@ -2,10 +2,12 @@ package com.rest.springbootemployee.repository;
 
 import com.rest.springbootemployee.entity.Company;
 import com.rest.springbootemployee.entity.Employee;
+import com.rest.springbootemployee.exception.NoSuchCompanyException;
 import org.springframework.stereotype.Repository;
 
 import java.util.ArrayList;
 import java.util.List;
+
 @Repository
 public class CompanyRepository {
     private final List<Company> companies = new ArrayList<>();
@@ -24,5 +26,16 @@ public class CompanyRepository {
 
     public List<Company> findAllCompanies() {
         return companies;
+    }
+
+    public Company findCompanyById(Integer id) {
+        return companies.stream()
+                .filter(company -> company.getId() == id)
+                .findFirst()
+                .orElseThrow(NoSuchCompanyException::new);
+    }
+
+    public List<Employee> findAllEmployeesByCompanyId(Integer id) {
+        return findCompanyById(id).getEmployees();
     }
 }
