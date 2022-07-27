@@ -12,7 +12,10 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
 
+import java.util.Collections;
 import java.util.List;
 
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -75,5 +78,48 @@ public class EmployeeControllerTest {
         assertThat(employees.get(0).getSalary(), equalTo(180));
         assertThat(employees.get(0).getAge(), equalTo(18));
     }
+
+    @Test
+    void should_get_employee_by_id_when_perform_given_employee_id() throws Exception {
+        //given
+        employeeImpl.addEmployee(new Employee(2,"George",18,"male",190));
+        //when & then
+        client.perform(MockMvcRequestBuilders.get("/employees/1"))
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.id").isNumber())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.name").value("George"))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.age").value(18))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.gender").value("male"))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.salary").value(190));
+    }
+
+
+//    @Test
+//    void should_get_employee_by_page_when_perform_given_page_and_pageSize() throws Exception {
+//        //given
+//        employeeImpl.addEmployee(new Employee(2,"George1",18,"male",190));
+//        employeeImpl.addEmployee(new Employee(2,"George2",18,"male",190));
+//        employeeImpl.addEmployee(new Employee(2,"George3",18,"male",190));
+//        MultiValueMap<String, Integer> params = new LinkedMultiValueMap<>();
+//        int page = 2;
+//        int pageSize = 2;
+//        params.put("page", Collections.singletonList(page));
+//        params.put("pageSize", Collections.singletonList(pageSize));
+//
+//        //when & then
+//        client.perform(MockMvcRequestBuilders.get("/employees")
+//                        .params(params))
+//                .andExpect(MockMvcResultMatchers.status().isOk())
+//                .andExpect(MockMvcResultMatchers.jsonPath("$.id").isNumber())
+//                .andExpect(MockMvcResultMatchers.jsonPath("$.name").value("George"))
+//                .andExpect(MockMvcResultMatchers.jsonPath("$.age").value(18))
+//                .andExpect(MockMvcResultMatchers.jsonPath("$.gender").value("male"))
+//                .andExpect(MockMvcResultMatchers.jsonPath("$.salary").value(190));
+//    }
+
+
+
+
+
 
 }
