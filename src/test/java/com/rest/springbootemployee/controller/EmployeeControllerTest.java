@@ -147,5 +147,20 @@ public class EmployeeControllerTest {
                 .andExpect(MockMvcResultMatchers.status().isNoContent());
     }
 
+    @Test
+    void should_get_employee_by_gender_when_perform_given_gender() throws Exception {
+        //given
+        employeeImpl.addEmployee(new Employee(1, "George1", 18, "male", 180));
+        employeeImpl.addEmployee(new Employee(2, "George2", 18, "female", 1801));
+
+        //when & then
+        client.perform(MockMvcRequestBuilders.get("/employees")
+                        .queryParam("gender", "female"))
+                .andExpect(MockMvcResultMatchers.jsonPath("$[0].name").value("George2"))
+                .andExpect(MockMvcResultMatchers.jsonPath("$[0].age").value(18))
+                .andExpect(MockMvcResultMatchers.jsonPath("$[0].gender").value("female"))
+                .andExpect(MockMvcResultMatchers.jsonPath("$[0].salary").value(1801));
+    }
+
 
 }
