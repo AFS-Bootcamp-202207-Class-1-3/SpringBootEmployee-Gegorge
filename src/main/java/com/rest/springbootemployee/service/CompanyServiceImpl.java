@@ -48,7 +48,7 @@ public class CompanyServiceImpl implements ICompany{
     }
 
     public Company updateCompanyById(Integer id,Company updateCompany) {
-        return companyRepository.updateCompanyName(id, updateCompany);
+        return companyRepository.updateCompanyById(id, updateCompany);
     }
 
     public void removeCompanyById(Integer id) {

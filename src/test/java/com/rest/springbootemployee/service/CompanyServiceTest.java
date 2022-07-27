@@ -17,6 +17,7 @@ import java.util.List;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.verify;
 
 @ExtendWith(SpringExtension.class)
 public class CompanyServiceTest {
@@ -55,6 +56,23 @@ public class CompanyServiceTest {
 
         //then
         assertThat(actualCompany.getCompanyName(), equalTo("OOCL"));
+    }
+
+    @Test
+    void should_return_updated_Company_when_update_given_employee() {
+        //given
+        List<Employee> employees = new ArrayList<>();
+        employees.add(new Employee(1, "George", 23, "male", 90));
+        Company company = new Company(1, "OOCL", employees);
+        Company newCompany = new Company(1, "IQAX", employees);
+        given(companyRepository.findCompanyById(1)).willReturn(company);
+        given(companyRepository.updateCompanyById(1, newCompany)).willCallRealMethod();
+
+        //when
+        Company updateCompany = companyService.updateCompanyById(1, newCompany);
+
+        //then
+        verify(companyRepository).updateCompanyById(1, newCompany);
     }
 
 }

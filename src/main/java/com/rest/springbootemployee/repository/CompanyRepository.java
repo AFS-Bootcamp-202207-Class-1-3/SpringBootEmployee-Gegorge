@@ -26,7 +26,7 @@ public class CompanyRepository {
     }
 
 
-    public Company updateCompanyName(Integer id, Company updateCompany) {
+    public Company updateCompanyById(Integer id, Company updateCompany) {
            return companies.stream()
                 .filter(company -> company.getId() == id)
                 .findFirst()
