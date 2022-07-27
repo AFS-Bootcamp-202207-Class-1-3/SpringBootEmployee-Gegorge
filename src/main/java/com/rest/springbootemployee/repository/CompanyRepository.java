@@ -63,4 +63,11 @@ public class CompanyRepository {
     public void removeById(int id) {
         companies.remove(findCompanyById(id));
     }
+
+    public List<Company> findCompanyByPage(int page, int pageSize) {
+        return companies.stream()
+                .skip((long) (page - 1) * pageSize)
+                .limit(pageSize)
+                .collect(Collectors.toList());
+    }
 }

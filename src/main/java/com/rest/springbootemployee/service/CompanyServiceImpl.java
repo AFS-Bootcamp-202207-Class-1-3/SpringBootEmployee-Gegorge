@@ -27,10 +27,7 @@ public class CompanyServiceImpl implements ICompany{
     }
 
     public List<Company> findCompanyByPage(int page, int pageSize) {
-        return companyRepository.companies.stream()
-                .skip((long) (page - 1) * pageSize)
-                .limit(pageSize)
-                .collect(Collectors.toList());
+        return companyRepository.findCompanyByPage(page, pageSize);
     }
 
     public int addCompany(Company company) {

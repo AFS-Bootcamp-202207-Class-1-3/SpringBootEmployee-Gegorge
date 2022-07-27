@@ -115,4 +115,14 @@ public class CompanyServiceTest {
         verify(companyRepository,times(1)).removeById(1);
     }
 
+    @Test
+    void should_return_companies_by_page_when_get_employee_given_page_and_pageSize() {
+        //given
+
+        //when
+        companyService.findCompanyByPage(2,2);
+        //then
+        verify(companyRepository,times(1)).findCompanyByPage(2,2);
+    }
+
 }
