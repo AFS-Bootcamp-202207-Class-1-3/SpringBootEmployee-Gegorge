@@ -90,8 +90,6 @@ public class EmployeeServiceTest {
     @Test
     void should_return_id_when_add_employee_given_employee() {
         //given
-        String gender = "male";
-
         Employee employee = new Employee(1, "George1", 23, "male", 90);
         given(employeeRepository.addEmployee(employee)).willReturn(1);
 
@@ -111,5 +109,16 @@ public class EmployeeServiceTest {
         //then
         verify(employeeRepository,times(1)).removeById(1);
     }
+
+    @Test
+    void should_return_employees_by_page_when_get_employee_given_page_and_pageSize() {
+        //given
+
+        //when
+        employeeService.findEmployeeByPage(2,2);
+        //then
+        verify(employeeRepository,times(1)).findEmployeesByPage(2,2);
+    }
+
 
 }

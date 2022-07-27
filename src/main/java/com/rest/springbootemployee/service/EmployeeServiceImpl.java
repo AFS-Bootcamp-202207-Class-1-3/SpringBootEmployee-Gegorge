@@ -38,10 +38,7 @@ public class EmployeeServiceImpl implements IEmployee{
     }
 
     public List<Employee> findEmployeeByPage(int page, int pageSize) {
-        return employeeRepository.employees.stream()
-                .skip((long) (page - 1) * pageSize)
-                .limit(pageSize)
-                .collect(Collectors.toList());
+        return employeeRepository.findEmployeesByPage(page,pageSize);
     }
 
     public void clearAll() {
