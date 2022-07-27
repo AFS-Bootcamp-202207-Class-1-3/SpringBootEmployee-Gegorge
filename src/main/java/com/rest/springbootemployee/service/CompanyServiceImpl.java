@@ -58,4 +58,8 @@ public class CompanyServiceImpl implements ICompany{
     public void removeCompanyById(Integer id) {
         companyRepository.companies.remove(findCompanyById(id));
     }
+
+    public void clearAll() {
+        companyRepository.companies.clear();
+    }
 }
