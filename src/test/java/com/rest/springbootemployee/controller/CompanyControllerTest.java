@@ -114,5 +114,21 @@ public class CompanyControllerTest {
         client.perform(MockMvcRequestBuilders.get("/companies/{id}",2))
                 .andExpect(MockMvcResultMatchers.status().isNotFound());
     }
+    @Test
+    void should_get_companies_by_page_when_perform_given_page_and_pageSize() throws Exception {
+        //given
+        Employee employee = new Employee(1, "George", 18, "male", 190);
+        companyService.addCompany(new Company(1, "OOCL", Arrays.asList(employee)));
+        companyService.addCompany(new Company(2, "IQAX", Arrays.asList(employee)));
+        companyService.addCompany(new Company(3, "OOIL", Arrays.asList(employee)));
 
+
+        //when & then
+        client.perform(MockMvcRequestBuilders.get("/companies")
+                        .queryParam("page", "2").queryParam("pageSize", "2"))
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.jsonPath("$[0].id").value(3))
+                .andExpect(MockMvcResultMatchers.jsonPath("$[0].companyName").value("OOIL"));
+
+    }
 }
