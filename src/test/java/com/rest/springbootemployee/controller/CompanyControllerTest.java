@@ -181,10 +181,25 @@ public class CompanyControllerTest {
         int id = companyService.addCompany(new Company(1, "OOCL", Arrays.asList(employee)));
 
         //when & then
-        client.perform(MockMvcRequestBuilders.delete("/employees/{id}", id)
+        client.perform(MockMvcRequestBuilders.delete("/companies/{id}", id)
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(MockMvcResultMatchers.status().isNoContent());
     }
+    @Test
+    void should_get_all_employees_when_perform_given_company_id() throws Exception {
+        //given
+        Employee employee1 = new Employee(1, "George1", 18, "male", 188);
+        Employee employee2 = new Employee(1, "George2", 18, "male", 190);
+        int id = companyService.addCompany(new Company(1, "OOCL", Arrays.asList(employee1,employee2)));
 
+        //when & then
+        client.perform(MockMvcRequestBuilders.get("/companies/{id}/employees",id)
+                        .queryParam("gender", "female"))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.size()").value(2))
+                .andExpect(MockMvcResultMatchers.jsonPath("$[0].name").value("George1"))
+                .andExpect(MockMvcResultMatchers.jsonPath("$[0].age").value(18))
+                .andExpect(MockMvcResultMatchers.jsonPath("$[0].gender").value("male"))
+                .andExpect(MockMvcResultMatchers.jsonPath("$[0].salary").value(188));
+    }
 
 }
