@@ -15,7 +15,6 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
 import java.util.Arrays;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
@@ -105,4 +104,15 @@ public class CompanyControllerTest {
                 .andExpect(MockMvcResultMatchers.jsonPath("$.id").isNumber())
                 .andExpect(MockMvcResultMatchers.jsonPath("$.companyName").value("IQAX"));
     }
+
+    @Test
+    void should_throw_no_such_company_exception_when_perform_given_wrong_company_id() throws Exception {
+        //given
+        Employee employee = new Employee(1, "George", 18, "male", 190);
+        int id = companyService.addCompany(new Company(1, "OOCL", Arrays.asList(employee)));
+        //when & then
+        client.perform(MockMvcRequestBuilders.get("/companies/{id}",2))
+                .andExpect(MockMvcResultMatchers.status().isNotFound());
+    }
+
 }
