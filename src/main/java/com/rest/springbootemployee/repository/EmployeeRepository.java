@@ -10,7 +10,7 @@ import java.util.stream.Collectors;
 
 @Repository
 public class EmployeeRepository {
-    private final List<Employee> employees;
+    public final List<Employee> employees;
 
     public EmployeeRepository() {
         this.employees = new ArrayList<>();
@@ -21,50 +21,4 @@ public class EmployeeRepository {
         employees.add(new Employee(5,"George5",18,"female",180));
     }
 
-    public List<Employee> findAllEmployee() {
-        return employees;
-    }
-
-    public Employee findEmployeeById(Integer id) {
-        return employees.stream()
-                .filter(employee -> employee.getId() == id)
-                .findFirst()
-                .orElseThrow(NoClassDefFoundError::new);
-    }
-
-    public List<Employee> findEmployeesByGender(String gender) {
-        return employees.stream()
-                .filter(employee -> employee.getGender().equals(gender))
-                .collect(Collectors.toList());
-    }
-
-    public List<Employee> addEmployee(Employee employee) {
-        employees.add(new Employee(generateEmployeeId(),
-                employee.getName(),employee.getAge(),employee.getGender(),employee.getSalary()));
-        return employees;
-    }
-
-    public Integer generateEmployeeId() {
-        return employees.stream()
-                .mapToInt(Employee::getId)
-                .max()
-                .orElse(0) + 1;
-    }
-
-    public Employee updateEmployee(Integer id) {
-        Employee updateEmployee = findEmployeeById(id);
-        updateEmployee.updateSalary(300);
-        return updateEmployee;
-    }
-
-    public void deleteEmployeeById(Integer id) {
-        employees.remove(findEmployeeById(id));
-    }
-
-    public List<Employee> findEmployeeByPage(int page, int pageSize) {
-        return employees.stream()
-                .skip((long) (page - 1) * pageSize)
-                .limit(pageSize)
-                .collect(Collectors.toList());
-    }
 }
