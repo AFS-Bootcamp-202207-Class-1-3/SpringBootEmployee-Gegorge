@@ -13,17 +13,11 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
-import org.springframework.util.LinkedMultiValueMap;
-import org.springframework.util.MultiValueMap;
-
-import java.util.Collections;
 import java.util.List;
-
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.hasSize;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+
 
 @AutoConfigureMockMvc
 @SpringBootTest
@@ -127,9 +121,23 @@ public class EmployeeControllerTest {
 
     }
 
+    @Test
+    void should_update_employee_salary_to_300_by_id_when_perform_given_update_employee() throws Exception {
+        //given
+        Employee employee = employeeImpl.addEmployee(new Employee(1, "George1", 18, "male", 190));
+        employeeImpl.updateEmployee(1);
 
 
-
+        //when & then
+        client.perform(MockMvcRequestBuilders.put("/employees/{id}", employee.getId())
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.id").value(1))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.name").value("George1"))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.age").value(18))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.gender").value("male"))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.salary").value(300));
+    }
 
 
 }
