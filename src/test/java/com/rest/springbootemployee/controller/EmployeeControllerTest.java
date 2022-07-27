@@ -1,7 +1,7 @@
 package com.rest.springbootemployee.controller;
 
 import com.rest.springbootemployee.entity.Employee;
-import com.rest.springbootemployee.service.EmployeeImpl;
+import com.rest.springbootemployee.service.EmployeeServiceImpl;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,17 +25,17 @@ public class EmployeeControllerTest {
     MockMvc client;
 
     @Autowired
-    EmployeeImpl employeeImpl;
+    EmployeeServiceImpl employeeServiceImpl;
 
     @BeforeEach
     void cleanDB() {
-        employeeImpl.clearAll();
+        employeeServiceImpl.clearAll();
     }
 
     @Test
     void should_get_all_employees_when_perform_given_employees() throws Exception {
         //given
-        employeeImpl.addEmployee(new Employee(1,"George",18,"male",190));
+        employeeServiceImpl.addEmployee(new Employee(1,"George",18,"male",190));
 
         //when & then
         client.perform(MockMvcRequestBuilders.get("/employees"))
@@ -68,7 +68,7 @@ public class EmployeeControllerTest {
                 .andExpect(MockMvcResultMatchers.jsonPath("$.salary").value(180));
 
         //should
-        List<Employee> employees = employeeImpl.findAllEmployee();
+        List<Employee> employees = employeeServiceImpl.findAllEmployee();
         assertThat(employees.size(), equalTo(1));
         assertThat(employees.get(0).getName(), equalTo("George1"));
         assertThat(employees.get(0).getGender(), equalTo("male"));
@@ -79,7 +79,7 @@ public class EmployeeControllerTest {
     @Test
     void should_get_employee_by_id_when_perform_given_employee_id() throws Exception {
         //given
-        Employee employee = employeeImpl.addEmployee(new Employee(2, "George", 18, "male", 190));
+        Employee employee = employeeServiceImpl.addEmployee(new Employee(2, "George", 18, "male", 190));
         //when & then
         client.perform(MockMvcRequestBuilders.get("/employees/{id}",employee.getId()))
                 .andExpect(MockMvcResultMatchers.status().isOk())
@@ -93,7 +93,7 @@ public class EmployeeControllerTest {
     @Test
     void should_throw_no_such_employee_exception_when_perform_given_wrong_employee_id() throws Exception {
         //given
-        employeeImpl.addEmployee(new Employee(2,"George",18,"male",190));
+        employeeServiceImpl.addEmployee(new Employee(2,"George",18,"male",190));
         //when & then
         client.perform(MockMvcRequestBuilders.get("/employees/2"))
                 .andExpect(MockMvcResultMatchers.status().isNotFound());
@@ -103,9 +103,9 @@ public class EmployeeControllerTest {
     @Test
     void should_get_employee_by_page_when_perform_given_page_and_pageSize() throws Exception {
         //given
-        employeeImpl.addEmployee(new Employee(1,"George1",18,"male",190));
-        employeeImpl.addEmployee(new Employee(2,"George2",18,"male",190));
-        employeeImpl.addEmployee(new Employee(3,"George3",18,"male",190));
+        employeeServiceImpl.addEmployee(new Employee(1,"George1",18,"male",190));
+        employeeServiceImpl.addEmployee(new Employee(2,"George2",18,"male",190));
+        employeeServiceImpl.addEmployee(new Employee(3,"George3",18,"male",190));
 
 
         //when & then
@@ -123,7 +123,7 @@ public class EmployeeControllerTest {
     @Test
     void should_update_employee_salary_to_300_by_id_when_perform_given_update_employee() throws Exception {
         //given
-        Employee employee = employeeImpl.addEmployee(new Employee(1, "George1", 18, "male", 190));
+        Employee employee = employeeServiceImpl.addEmployee(new Employee(1, "George1", 18, "male", 190));
 
         //when & then
         client.perform(MockMvcRequestBuilders.put("/employees/{id}", employee.getId())
@@ -139,7 +139,7 @@ public class EmployeeControllerTest {
     @Test
     void should_delete_employee_by_id_when_perform_given_delete_employee() throws Exception {
         //given
-        Employee employee = employeeImpl.addEmployee(new Employee(1, "George1", 18, "male", 190));
+        Employee employee = employeeServiceImpl.addEmployee(new Employee(1, "George1", 18, "male", 190));
 
         //when & then
         client.perform(MockMvcRequestBuilders.delete("/employees/{id}", employee.getId())
@@ -150,8 +150,8 @@ public class EmployeeControllerTest {
     @Test
     void should_get_employee_by_gender_when_perform_given_gender() throws Exception {
         //given
-        employeeImpl.addEmployee(new Employee(1, "George1", 18, "male", 180));
-        employeeImpl.addEmployee(new Employee(2, "George2", 18, "female", 1801));
+        employeeServiceImpl.addEmployee(new Employee(1, "George1", 18, "male", 180));
+        employeeServiceImpl.addEmployee(new Employee(2, "George2", 18, "female", 1801));
 
         //when & then
         client.perform(MockMvcRequestBuilders.get("/employees")
