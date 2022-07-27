@@ -15,6 +15,9 @@ public class Employee {
         this.salary = salary;
     }
 
+    public Employee() {
+    }
+
     public int getId() {
         return id;
     }
@@ -39,7 +42,12 @@ public class Employee {
         return salary;
     }
 
-    public void updateSalary(int salary) {
-        this.setSalary(salary);
+
+    public Employee merge(Employee employee) {
+        this.name = employee.getName();
+        this.age = employee.getAge();
+        this.salary = employee.getSalary();
+        this.gender = employee.getGender();
+        return this;
     }
 }

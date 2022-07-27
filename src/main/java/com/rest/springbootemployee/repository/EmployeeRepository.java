@@ -32,4 +32,8 @@ public class EmployeeRepository {
                 .findFirst()
                 .orElseThrow(NoSuchEmployeeException::new);
     }
+
+    public Employee updateEmployeeById(Integer id, Employee updateEmployee) {
+         return findEmployeeById(id).merge(updateEmployee);
+    }
 }

@@ -40,10 +40,8 @@ public class EmployeeServiceImpl implements IEmployee{
                 .orElse(0) + 1;
     }
 
-    public Employee updateEmployee(Integer id) {
-        Employee updateEmployee = findEmployeeById(id);
-        updateEmployee.updateSalary(300);
-        return updateEmployee;
+    public Employee updateEmployee(Integer id, Employee updateEmployee) {
+        return employeeRepository.updateEmployeeById(id, updateEmployee);
     }
 
     public void deleteEmployeeById(Integer id) {

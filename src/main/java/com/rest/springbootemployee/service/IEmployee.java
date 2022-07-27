@@ -10,7 +10,7 @@ public interface IEmployee {
     List<Employee> findEmployeesByGender(String gender);
     Employee addEmployee(Employee employee);
     Integer generateEmployeeId();
-    Employee updateEmployee(Integer id);
+    Employee updateEmployee(Integer id, Employee employee);
     void deleteEmployeeById(Integer id);
     List<Employee> findEmployeeByPage(int page, int pageSize);
 }

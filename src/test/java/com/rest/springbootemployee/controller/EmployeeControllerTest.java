@@ -123,17 +123,25 @@ public class EmployeeControllerTest {
     @Test
     void should_update_employee_salary_to_300_by_id_when_perform_given_update_employee() throws Exception {
         //given
-        Employee employee = employeeServiceImpl.addEmployee(new Employee(1, "George1", 18, "male", 190));
-
+        Employee employee = employeeServiceImpl.addEmployee(
+                new Employee(1, "George", 18, "male", 190));
+        String newEmployee = "    {\n" +
+                "        \"id\": 1,\n" +
+                "        \"name\": \"George1111\",\n" +
+                "        \"age\": 18,\n" +
+                "        \"gender\": \"male\",\n" +
+                "        \"salary\": 180\n" +
+                "    }";
         //when & then
-        client.perform(MockMvcRequestBuilders.put("/employees/{id}", employee.getId())
-                        .contentType(MediaType.APPLICATION_JSON))
+        client.perform(MockMvcRequestBuilders.put("/employees/{id}",employee.getId())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(newEmployee))
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(MockMvcResultMatchers.jsonPath("$.id").value(1))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.name").value("George1"))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.name").value("George1111"))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.age").value(18))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.gender").value("male"))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.salary").value(300));
+                .andExpect(MockMvcResultMatchers.jsonPath("$.salary").value(180));
     }
 
     @Test

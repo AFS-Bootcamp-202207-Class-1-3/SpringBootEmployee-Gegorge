@@ -5,18 +5,20 @@ import com.rest.springbootemployee.repository.EmployeeRepository;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
-import org.mockito.Spy;
+import org.mockito.Mock;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.equalTo;
 import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.verify;
 
 @ExtendWith(SpringExtension.class)
 public class EmployeeServiceTest {
-    @Spy
+    @Mock
     EmployeeRepository employeeRepository;
     @InjectMocks
     EmployeeServiceImpl employeeService;
@@ -31,8 +33,8 @@ public class EmployeeServiceTest {
         List<Employee> actualEmployees = employeeService.findAllEmployee();
 
         //then
-        assertThat(actualEmployees.get(0).getName().equals("George"));
-        assertThat(actualEmployees.get(0).getAge() == 23);
+        assertThat(actualEmployees.get(0).getName(), equalTo("George"));
+        assertThat(actualEmployees.get(0).getAge(), equalTo(23));
     }
 
     @Test
@@ -46,7 +48,23 @@ public class EmployeeServiceTest {
         Employee actualEmployee = employeeService.findEmployeeById(id);
 
         //then
-        assertThat(actualEmployee.getName().equals("George"));
+        assertThat(actualEmployee.getName(), equalTo("George"));
+    }
+
+    @Test
+    void should_return_updated_employee_when_update_given_employee() {
+        //given
+        int newSalary = 100;
+        Employee originalEmployee = new Employee(1, "Miky", 24, "female", 90);
+        Employee updateEmployee = new Employee(2, "Miky", 24, "female", newSalary);
+        given(employeeRepository.findEmployeeById(1)).willReturn(originalEmployee);
+        given(employeeRepository.updateEmployeeById(1, updateEmployee)).willCallRealMethod();
+
+        //when
+        Employee employee = employeeService.updateEmployee(1, updateEmployee);
+
+        //then
+        verify(employeeRepository).updateEmployeeById(1, updateEmployee);
     }
 
 
