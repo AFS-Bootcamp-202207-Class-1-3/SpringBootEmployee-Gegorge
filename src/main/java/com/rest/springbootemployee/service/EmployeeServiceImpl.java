@@ -34,7 +34,7 @@ public class EmployeeServiceImpl implements IEmployee{
     }
 
     public void deleteEmployeeById(Integer id) {
-        employeeRepository.employees.remove(findEmployeeById(id));
+        employeeRepository.removeById(id);
     }
 
     public List<Employee> findEmployeeByPage(int page, int pageSize) {

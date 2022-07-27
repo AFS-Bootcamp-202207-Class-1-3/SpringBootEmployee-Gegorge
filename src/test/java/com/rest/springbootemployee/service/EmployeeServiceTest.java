@@ -15,6 +15,7 @@ import java.util.List;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
 @ExtendWith(SpringExtension.class)
@@ -99,6 +100,16 @@ public class EmployeeServiceTest {
 
         //then
         assertThat(id, equalTo(1));
+    }
+
+    @Test
+    void should_remove_employee_when_delete_employee_given_employee_id() {
+        //given
+
+        //when
+        employeeService.deleteEmployeeById(1);
+        //then
+        verify(employeeRepository,times(1)).removeById(1);
     }
 
 }

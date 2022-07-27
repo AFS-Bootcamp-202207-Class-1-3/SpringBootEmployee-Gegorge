@@ -57,4 +57,8 @@ public class EmployeeRepository {
                 .max()
                 .orElse(0) + 1;
     }
+
+    public void removeById(Integer id) {
+        employees.remove(findEmployeeById(id));
+    }
 }
