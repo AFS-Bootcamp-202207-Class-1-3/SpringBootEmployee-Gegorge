@@ -28,10 +28,11 @@ public class EmployeeImpl implements IEmployee{
                 .collect(Collectors.toList());
     }
 
-    public List<Employee> addEmployee(Employee employee) {
-        employeeRepository.employees.add(new Employee(generateEmployeeId(),
-                employee.getName(),employee.getAge(),employee.getGender(),employee.getSalary()));
-        return employeeRepository.employees;
+    public Employee addEmployee(Employee employee) {
+        Employee addEmployee = new Employee(generateEmployeeId(),
+                employee.getName(), employee.getAge(), employee.getGender(), employee.getSalary());
+        employeeRepository.employees.add(addEmployee);
+        return addEmployee;
     }
 
     public Integer generateEmployeeId() {
@@ -56,5 +57,9 @@ public class EmployeeImpl implements IEmployee{
                 .skip((long) (page - 1) * pageSize)
                 .limit(pageSize)
                 .collect(Collectors.toList());
+    }
+
+    public void clearAll() {
+        employeeRepository.employees.clear();
     }
 }

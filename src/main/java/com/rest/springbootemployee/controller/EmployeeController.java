@@ -30,7 +30,7 @@ public class EmployeeController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public List<Employee> addEmployee(@RequestBody Employee employee) {
+    public Employee addEmployee(@RequestBody Employee employee) {
         return employeeImpl.addEmployee(employee);
     }
 
