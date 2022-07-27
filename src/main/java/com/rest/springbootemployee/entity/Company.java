@@ -32,7 +32,9 @@ public class Company {
         this.companyName = companyName;
     }
 
-    public void updateCompanyName() {
-        this.setCompanyName("OOIL");
+    public Company updateCompanyName(Company company) {
+        this.setCompanyName(company.getCompanyName());
+        this.employees = company.getEmployees();
+        return this;
     }
 }

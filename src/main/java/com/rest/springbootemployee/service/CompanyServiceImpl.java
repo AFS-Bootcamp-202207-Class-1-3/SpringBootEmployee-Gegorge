@@ -43,17 +43,15 @@ public class CompanyServiceImpl implements ICompany{
         return id;
     }
 
-    public Integer generateCompanyId() {
+    private Integer generateCompanyId() {
         return companyRepository.companies.stream()
                 .mapToInt(Company::getId)
                 .max()
                 .orElse(0) + 1;
     }
 
-    public Company updateCompanyById(Integer id) {
-        Company updateCompany = findCompanyById(id);
-        updateCompany.updateCompanyName();
-        return updateCompany;
+    public Company updateCompanyById(Integer id,Company updateCompany) {
+        return companyRepository.updateCompanyName(id, updateCompany);
     }
 
     public void removeCompanyById(Integer id) {

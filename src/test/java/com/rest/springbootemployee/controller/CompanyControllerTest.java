@@ -131,4 +131,47 @@ public class CompanyControllerTest {
                 .andExpect(MockMvcResultMatchers.jsonPath("$[0].companyName").value("OOIL"));
 
     }
+
+    @Test
+    void should_update_employee_salary_to_300_by_id_when_perform_given_update_employee() throws Exception {
+        //given
+        Employee employee = new Employee(1, "George", 18, "male", 190);
+        int id = companyService.addCompany(new Company(1, "OOCL", Arrays.asList(employee)));
+        String newCompany = "    {\n" +
+                "        \"id\": 1,\n" +
+                "        \"companyName\": \"OOIL\",\n" +
+                "        \"employees\": [\n" +
+                "            {\n" +
+                "                \"id\": 1,\n" +
+                "                \"name\": \"George1\",\n" +
+                "                \"age\": 18,\n" +
+                "                \"gender\": \"male\",\n" +
+                "                \"salary\": 180\n" +
+                "            },\n" +
+                "            {\n" +
+                "                \"id\": 2,\n" +
+                "                \"name\": \"George2\",\n" +
+                "                \"age\": 18,\n" +
+                "                \"gender\": \"male\",\n" +
+                "                \"salary\": 180\n" +
+                "            },\n" +
+                "            {\n" +
+                "                \"id\": 3,\n" +
+                "                \"name\": \"George3\",\n" +
+                "                \"age\": 18,\n" +
+                "                \"gender\": \"male\",\n" +
+                "                \"salary\": 180\n" +
+                "            }\n" +
+                "        ]\n" +
+                "    }";
+        //when & then
+        client.perform(MockMvcRequestBuilders.put("/companies/{id}",id)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(newCompany))
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.id").value(1))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.companyName").value("OOIL"))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.employees.size()").value(3));
+    }
+
 }
