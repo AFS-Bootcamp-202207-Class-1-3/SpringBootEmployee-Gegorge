@@ -59,4 +59,8 @@ public class CompanyRepository {
                 .max()
                 .orElse(0) + 1;
     }
+
+    public void removeById(int id) {
+        companies.remove(findCompanyById(id));
+    }
 }

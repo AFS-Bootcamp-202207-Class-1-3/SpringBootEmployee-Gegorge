@@ -17,6 +17,7 @@ import java.util.List;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
 @ExtendWith(SpringExtension.class)
@@ -103,4 +104,15 @@ public class CompanyServiceTest {
         //then
         assertThat(id, equalTo(1));
     }
+
+    @Test
+    void should_remove_company_when_delete_company_given_company_id() {
+        //given
+
+        //when
+        companyService.removeCompanyById(1);
+        //then
+        verify(companyRepository,times(1)).removeById(1);
+    }
+
 }
