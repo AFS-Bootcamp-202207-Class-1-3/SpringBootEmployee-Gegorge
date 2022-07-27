@@ -17,10 +17,7 @@ public class EmployeeServiceImpl implements IEmployee{
         return employeeRepository.findAllEmployee();
     }
     public Employee findEmployeeById(Integer id) {
-        return employeeRepository.employees.stream()
-                .filter(employee -> employee.getId() == id)
-                .findFirst()
-                .orElseThrow(NoSuchEmployeeException::new);
+        return employeeRepository.findEmployeeById(id);
     }
 
     public List<Employee> findEmployeesByGender(String gender) {

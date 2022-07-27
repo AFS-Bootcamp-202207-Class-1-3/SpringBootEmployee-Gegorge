@@ -35,5 +35,19 @@ public class EmployeeServiceTest {
         assertThat(actualEmployees.get(0).getAge() == 23);
     }
 
+    @Test
+    void should_return_employee_when_find_by_id_given_employee_id() {
+        //given
+        Employee employee = new Employee(1, "George", 23, "male", 90);
+        int id = 1;
+        given(employeeRepository.findEmployeeById(id)).willReturn(employee);
+
+        //when
+        Employee actualEmployee = employeeService.findEmployeeById(id);
+
+        //then
+        assertThat(actualEmployee.getName().equals("George"));
+    }
+
 
 }

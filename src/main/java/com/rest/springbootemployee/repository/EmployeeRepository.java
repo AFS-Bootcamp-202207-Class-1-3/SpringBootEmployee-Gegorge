@@ -1,6 +1,7 @@
 package com.rest.springbootemployee.repository;
 
 import com.rest.springbootemployee.entity.Employee;
+import com.rest.springbootemployee.exception.NoSuchEmployeeException;
 import org.springframework.stereotype.Repository;
 
 import java.util.ArrayList;
@@ -23,5 +24,12 @@ public class EmployeeRepository {
 
     public List<Employee> findAllEmployee() {
         return employees;
+    }
+
+    public Employee findEmployeeById(Integer id) {
+        return employees.stream()
+                .filter(employee -> employee.getId() == id)
+                .findFirst()
+                .orElseThrow(NoSuchEmployeeException::new);
     }
 }
