@@ -18,7 +18,7 @@ public class CompanyImpl implements ICompany{
         return companyRepository.companies;
     }
 
-    public Company findCompanyById(Integer id) {
+    public Company findCompanyById(Integer id) throws NoSuchCompanyException{
         return companyRepository.companies.stream()
                 .filter(company -> company.getId() == id)
                 .findFirst()

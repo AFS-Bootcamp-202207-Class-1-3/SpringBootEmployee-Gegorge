@@ -1,6 +1,7 @@
 package com.rest.springbootemployee.controller;
 
 import com.rest.springbootemployee.entity.Employee;
+import com.rest.springbootemployee.exception.NoSuchEmployeeException;
 import com.rest.springbootemployee.service.EmployeeImpl;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -21,6 +22,9 @@ import java.util.List;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.hasSize;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+
 @AutoConfigureMockMvc
 @SpringBootTest
 public class EmployeeControllerTest {
@@ -91,6 +95,15 @@ public class EmployeeControllerTest {
                 .andExpect(MockMvcResultMatchers.jsonPath("$.age").value(18))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.gender").value("male"))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.salary").value(190));
+    }
+
+    @Test
+    void should_throw_no_such_employee_exception_when_perform_given_wrong_employee_id() throws Exception {
+        //given
+        employeeImpl.addEmployee(new Employee(2,"George",18,"male",190));
+        //when & then
+        client.perform(MockMvcRequestBuilders.get("/employees/2"))
+                .andExpect(MockMvcResultMatchers.status().isNotFound());
     }
 
 
