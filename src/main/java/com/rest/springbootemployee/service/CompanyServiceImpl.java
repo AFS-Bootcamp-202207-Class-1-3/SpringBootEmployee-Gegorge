@@ -15,7 +15,7 @@ public class CompanyServiceImpl implements ICompany{
     @Autowired
     private CompanyRepository companyRepository;
     public List<Company> findAllCompanies() {
-        return companyRepository.companies;
+        return companyRepository.findAllCompanies();
     }
 
     public Company findCompanyById(Integer id) throws NoSuchCompanyException{

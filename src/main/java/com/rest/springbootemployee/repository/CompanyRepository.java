@@ -32,4 +32,8 @@ public class CompanyRepository {
                 .findFirst()
                 .orElseThrow(NoSuchCompanyException::new).updateCompanyName(updateCompany);
     }
+
+    public List<Company> findAllCompanies() {
+        return companies;
+    }
 }
