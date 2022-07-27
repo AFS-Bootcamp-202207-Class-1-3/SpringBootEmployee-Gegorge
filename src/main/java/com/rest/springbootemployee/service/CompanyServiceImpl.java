@@ -23,7 +23,7 @@ public class CompanyServiceImpl implements ICompany{
     }
 
     public List<Employee> findAllEmployeesByCompanyId(Integer id) {
-        return findCompanyById(id).getEmployees();
+        return companyRepository.findAllEmployeeByCompanyId(id);
     }
 
     public List<Company> findCompanyByPage(int page, int pageSize) {

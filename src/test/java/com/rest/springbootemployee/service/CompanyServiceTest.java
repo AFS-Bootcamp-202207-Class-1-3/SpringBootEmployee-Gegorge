@@ -74,5 +74,18 @@ public class CompanyServiceTest {
         //then
         verify(companyRepository).updateCompanyById(1, newCompany);
     }
+    @Test
+    void should_return_employees_when_find_employees_by_gender_given_company_id() {
+        //given
+        List<Employee> employees = new ArrayList<>();
+        employees.add(new Employee(1, "George1", 23, "male", 902));
+        employees.add(new Employee(2, "George2", 23, "male", 903));
+        given(companyRepository.findAllEmployeeByCompanyId(1)).willReturn(employees);
 
+        //when
+        List<Employee> employeesByCompanyId = companyService.findAllEmployeesByCompanyId(1);
+
+        //then
+        assertThat(employeesByCompanyId.size(), equalTo(2));
+    }
 }
