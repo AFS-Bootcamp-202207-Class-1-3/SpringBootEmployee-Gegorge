@@ -47,4 +47,16 @@ public class CompanyRepository {
     public List<Employee> findAllEmployeeByCompanyId(int id) {
         return findCompanyById(id).getEmployees();
     }
+
+    public int addCompany(Company company) {
+        int id = generateCompanyId();
+        companies.add(new Company(id, company.getCompanyName(),company.getEmployees()));
+        return id;
+    }
+    private Integer generateCompanyId() {
+        return companies.stream()
+                .mapToInt(Company::getId)
+                .max()
+                .orElse(0) + 1;
+    }
 }

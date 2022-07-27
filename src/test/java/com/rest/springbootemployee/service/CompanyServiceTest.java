@@ -88,4 +88,19 @@ public class CompanyServiceTest {
         //then
         assertThat(employeesByCompanyId.size(), equalTo(2));
     }
+
+    @Test
+    void should_return_id_when_add_company_given_company() {
+        //given
+        List<Employee> employees = new ArrayList<>();
+        employees.add(new Employee( 3, "George", 23, "male", 90));
+        Company company = new Company(3, "OOCL", employees);
+        given(companyRepository.addCompany(company)).willReturn(1);
+
+        //when
+        Integer id = companyService.addCompany(company);
+
+        //then
+        assertThat(id, equalTo(1));
+    }
 }

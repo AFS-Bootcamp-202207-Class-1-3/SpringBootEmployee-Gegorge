@@ -34,18 +34,9 @@ public class CompanyServiceImpl implements ICompany{
     }
 
     public int addCompany(Company company) {
-        int id = generateCompanyId();
-        companyRepository.companies.add(new Company(id,
-                company.getCompanyName(),company.getEmployees()));
-        return id;
+        return companyRepository.addCompany(company);
     }
 
-    private Integer generateCompanyId() {
-        return companyRepository.companies.stream()
-                .mapToInt(Company::getId)
-                .max()
-                .orElse(0) + 1;
-    }
 
     public Company updateCompanyById(Integer id,Company updateCompany) {
         return companyRepository.updateCompanyById(id, updateCompany);
