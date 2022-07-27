@@ -36,4 +36,11 @@ public class CompanyRepository {
     public List<Company> findAllCompanies() {
         return companies;
     }
+
+    public Company findCompanyById(int id) {
+        return companies.stream()
+                .filter(company -> company.getId() == id)
+                .findFirst()
+                .orElseThrow(NoSuchCompanyException::new);
+    }
 }

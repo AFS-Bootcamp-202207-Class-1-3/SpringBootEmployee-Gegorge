@@ -18,11 +18,8 @@ public class CompanyServiceImpl implements ICompany{
         return companyRepository.findAllCompanies();
     }
 
-    public Company findCompanyById(Integer id) throws NoSuchCompanyException{
-        return companyRepository.companies.stream()
-                .filter(company -> company.getId() == id)
-                .findFirst()
-                .orElseThrow(NoSuchCompanyException::new);
+    public Company findCompanyById(Integer id) {
+        return companyRepository.findCompanyById(id);
     }
 
     public List<Employee> findAllEmployeesByCompanyId(Integer id) {

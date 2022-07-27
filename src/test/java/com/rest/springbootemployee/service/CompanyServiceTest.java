@@ -42,5 +42,19 @@ public class CompanyServiceTest {
         assertThat(actualCompanies.get(0).getCompanyName(), equalTo("OOCL"));
         assertThat(actualCompanies.get(1).getCompanyName(), equalTo("IQAX"));
     }
+    @Test
+    void should_return_company_when_find_by_id_given_company_id() {
+        //given
+        List<Employee> employees = new ArrayList<>();
+        employees.add(new Employee(1, "George", 23, "male", 90));
+        Company company = new Company(1, "OOCL", employees);
+        given(companyRepository.findCompanyById(1)).willReturn(company);
+
+        //when
+        Company actualCompany = companyService.findCompanyById(1);
+
+        //then
+        assertThat(actualCompany.getCompanyName(), equalTo("OOCL"));
+    }
 
 }
