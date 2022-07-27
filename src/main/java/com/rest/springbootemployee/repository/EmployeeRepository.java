@@ -21,4 +21,7 @@ public class EmployeeRepository {
         employees.add(new Employee(5,"George5",18,"female",180));
     }
 
+    public List<Employee> findAllEmployee() {
+        return employees;
+    }
 }

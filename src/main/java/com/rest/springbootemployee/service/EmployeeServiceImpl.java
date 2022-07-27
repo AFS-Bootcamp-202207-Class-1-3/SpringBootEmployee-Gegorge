@@ -14,7 +14,7 @@ public class EmployeeServiceImpl implements IEmployee{
     private EmployeeRepository employeeRepository;
 
     public List<Employee> findAllEmployee() {
-        return employeeRepository.employees;
+        return employeeRepository.findAllEmployee();
     }
     public Employee findEmployeeById(Integer id) {
         return employeeRepository.employees.stream()
