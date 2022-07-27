@@ -174,4 +174,17 @@ public class CompanyControllerTest {
                 .andExpect(MockMvcResultMatchers.jsonPath("$.employees.size()").value(3));
     }
 
+    @Test
+    void should_delete_company_by_id_when_perform_given_delete_company_id() throws Exception {
+        //given
+        Employee employee = new Employee(1, "George", 18, "male", 190);
+        int id = companyService.addCompany(new Company(1, "OOCL", Arrays.asList(employee)));
+
+        //when & then
+        client.perform(MockMvcRequestBuilders.delete("/employees/{id}", id)
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(MockMvcResultMatchers.status().isNoContent());
+    }
+
+
 }
