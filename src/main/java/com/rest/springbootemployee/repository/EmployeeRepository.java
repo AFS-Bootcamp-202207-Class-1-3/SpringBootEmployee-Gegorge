@@ -36,4 +36,25 @@ public class EmployeeRepository {
     public Employee updateEmployeeById(Integer id, Employee updateEmployee) {
          return findEmployeeById(id).merge(updateEmployee);
     }
+
+    public List<Employee> findEmployeesByGender(String gender) {
+        return employees.stream()
+                .filter(employee -> employee.getGender().equals(gender))
+                .collect(Collectors.toList());
+    }
+
+    public Integer addEmployee(Employee employee) {
+        int id = generateEmployeeId();
+        Employee addEmployee = new Employee(id,
+                employee.getName(), employee.getAge(), employee.getGender(), employee.getSalary());
+        employees.add(addEmployee);
+        return id;
+    }
+
+    public Integer generateEmployeeId() {
+        return employees.stream()
+                .mapToInt(Employee::getId)
+                .max()
+                .orElse(0) + 1;
+    }
 }

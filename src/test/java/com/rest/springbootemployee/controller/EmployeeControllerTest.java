@@ -61,11 +61,7 @@ public class EmployeeControllerTest {
         client.perform(MockMvcRequestBuilders.post("/employees")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(newEmployee))
-                .andExpect(MockMvcResultMatchers.status().isCreated())
-                .andExpect(MockMvcResultMatchers.jsonPath("$.name").value("George1"))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.gender").value("male"))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.age").value(18))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.salary").value(180));
+                .andExpect(MockMvcResultMatchers.status().isCreated());
 
         //should
         List<Employee> employees = employeeServiceImpl.findAllEmployee();
@@ -79,9 +75,9 @@ public class EmployeeControllerTest {
     @Test
     void should_get_employee_by_id_when_perform_given_employee_id() throws Exception {
         //given
-        Employee employee = employeeServiceImpl.addEmployee(new Employee(2, "George", 18, "male", 190));
+        Integer id = employeeServiceImpl.addEmployee(new Employee(2, "George", 18, "male", 190));
         //when & then
-        client.perform(MockMvcRequestBuilders.get("/employees/{id}",employee.getId()))
+        client.perform(MockMvcRequestBuilders.get("/employees/{id}",id))
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(MockMvcResultMatchers.jsonPath("$.id").isNumber())
                 .andExpect(MockMvcResultMatchers.jsonPath("$.name").value("George"))
@@ -123,7 +119,7 @@ public class EmployeeControllerTest {
     @Test
     void should_update_employee_salary_to_300_by_id_when_perform_given_update_employee() throws Exception {
         //given
-        Employee employee = employeeServiceImpl.addEmployee(
+        Integer id = employeeServiceImpl.addEmployee(
                 new Employee(1, "George", 18, "male", 190));
         String newEmployee = "    {\n" +
                 "        \"id\": 1,\n" +
@@ -133,7 +129,7 @@ public class EmployeeControllerTest {
                 "        \"salary\": 180\n" +
                 "    }";
         //when & then
-        client.perform(MockMvcRequestBuilders.put("/employees/{id}",employee.getId())
+        client.perform(MockMvcRequestBuilders.put("/employees/{id}",id)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(newEmployee))
                 .andExpect(MockMvcResultMatchers.status().isOk())
@@ -147,10 +143,11 @@ public class EmployeeControllerTest {
     @Test
     void should_delete_employee_by_id_when_perform_given_delete_employee() throws Exception {
         //given
-        Employee employee = employeeServiceImpl.addEmployee(new Employee(1, "George1", 18, "male", 190));
+        Integer id = employeeServiceImpl
+                .addEmployee(new Employee(1, "George1", 18, "male", 190));
 
         //when & then
-        client.perform(MockMvcRequestBuilders.delete("/employees/{id}", employee.getId())
+        client.perform(MockMvcRequestBuilders.delete("/employees/{id}", id)
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(MockMvcResultMatchers.status().isNoContent());
     }

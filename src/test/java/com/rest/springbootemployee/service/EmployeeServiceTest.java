@@ -9,6 +9,7 @@ import org.mockito.Mock;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -66,6 +67,38 @@ public class EmployeeServiceTest {
         //then
         verify(employeeRepository).updateEmployeeById(1, updateEmployee);
     }
+    
+    @Test
+    void should_return_employees_by_gender_when_find_employee_by_gender_given_gender() {
+        //given
+        String gender = "male";
+        List<Employee> employees = Arrays.asList(
+                new Employee(1, "George1", 23, "male", 90),
+                new Employee(2, "George2", 23, "male", 90),
+                new Employee(3, "George3", 23, "male", 90)
+        );
+        given(employeeRepository.findEmployeesByGender(gender)).willReturn(employees);
+        
+        //when
+        List<Employee> employeesByGender = employeeService.findEmployeesByGender(gender);
 
+        //then
+        assertThat(employeesByGender.size(), equalTo(3));
+    }
+
+    @Test
+    void should_return_id_when_add_employee_given_employee() {
+        //given
+        String gender = "male";
+
+        Employee employee = new Employee(1, "George1", 23, "male", 90);
+        given(employeeRepository.addEmployee(employee)).willReturn(1);
+
+        //when
+        Integer id = employeeService.addEmployee(employee);
+
+        //then
+        assertThat(id, equalTo(1));
+    }
 
 }

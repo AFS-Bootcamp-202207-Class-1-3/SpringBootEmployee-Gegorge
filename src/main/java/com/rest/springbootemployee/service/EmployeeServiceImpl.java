@@ -21,24 +21,13 @@ public class EmployeeServiceImpl implements IEmployee{
     }
 
     public List<Employee> findEmployeesByGender(String gender) {
-        return employeeRepository.employees.stream()
-                .filter(employee -> employee.getGender().equals(gender))
-                .collect(Collectors.toList());
+        return employeeRepository.findEmployeesByGender(gender);
     }
 
-    public Employee addEmployee(Employee employee) {
-        Employee addEmployee = new Employee(generateEmployeeId(),
-                employee.getName(), employee.getAge(), employee.getGender(), employee.getSalary());
-        employeeRepository.employees.add(addEmployee);
-        return addEmployee;
+    public Integer addEmployee(Employee employee) {
+        return employeeRepository.addEmployee(employee);
     }
 
-    public Integer generateEmployeeId() {
-        return employeeRepository.employees.stream()
-                .mapToInt(Employee::getId)
-                .max()
-                .orElse(0) + 1;
-    }
 
     public Employee updateEmployee(Integer id, Employee updateEmployee) {
         return employeeRepository.updateEmployeeById(id, updateEmployee);

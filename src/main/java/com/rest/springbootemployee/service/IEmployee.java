@@ -8,8 +8,7 @@ import java.util.List;
 public interface IEmployee {
     Employee findEmployeeById(Integer id);
     List<Employee> findEmployeesByGender(String gender);
-    Employee addEmployee(Employee employee);
-    Integer generateEmployeeId();
+    Integer addEmployee(Employee employee);
     Employee updateEmployee(Integer id, Employee employee);
     void deleteEmployeeById(Integer id);
     List<Employee> findEmployeeByPage(int page, int pageSize);
