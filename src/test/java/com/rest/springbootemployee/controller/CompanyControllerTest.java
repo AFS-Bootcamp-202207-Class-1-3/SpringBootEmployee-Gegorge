@@ -49,32 +49,50 @@ public class CompanyControllerTest {
                 .andExpect(MockMvcResultMatchers.jsonPath("$[0].companyName").value("OOCL"));
     }
 
-//    @Test
-//    void should_create_new_employee_when_perform_post_given_new_employee() throws Exception {
-//        //given
-//        String newEmployee = "       {\n" +
-//                "        \"id\": 1,\n" +
-//                "        \"name\": \"George1\",\n" +
-//                "        \"age\": 18,\n" +
-//                "        \"gender\": \"male\",\n" +
-//                "        \"salary\": 180\n" +
-//                "    }";
-//
-//        //when & then
-//        client.perform(MockMvcRequestBuilders.post("/employees")
-//                        .contentType(MediaType.APPLICATION_JSON)
-//                        .content(newEmployee))
-//                .andExpect(MockMvcResultMatchers.status().isCreated());
-//
-//        //should
-//        List<Employee> employees = employeeServiceImpl.findAllEmployee();
-//        assertThat(employees.size(), equalTo(1));
-//        assertThat(employees.get(0).getName(), equalTo("George1"));
-//        assertThat(employees.get(0).getGender(), equalTo("male"));
-//        assertThat(employees.get(0).getSalary(), equalTo(180));
-//        assertThat(employees.get(0).getAge(), equalTo(18));
-//    }
-//
+    @Test
+    void should_create_new_employee_when_perform_post_given_new_employee() throws Exception {
+        //given
+        String newCompany = "    {\n" +
+                "        \"id\": 1,\n" +
+                "        \"companyName\": \"OOCL\",\n" +
+                "        \"employees\": [\n" +
+                "            {\n" +
+                "                \"id\": 1,\n" +
+                "                \"name\": \"George1\",\n" +
+                "                \"age\": 18,\n" +
+                "                \"gender\": \"male\",\n" +
+                "                \"salary\": 180\n" +
+                "            },\n" +
+                "            {\n" +
+                "                \"id\": 2,\n" +
+                "                \"name\": \"George2\",\n" +
+                "                \"age\": 18,\n" +
+                "                \"gender\": \"male\",\n" +
+                "                \"salary\": 180\n" +
+                "            },\n" +
+                "            {\n" +
+                "                \"id\": 3,\n" +
+                "                \"name\": \"George3\",\n" +
+                "                \"age\": 18,\n" +
+                "                \"gender\": \"male\",\n" +
+                "                \"salary\": 180\n" +
+                "            }\n" +
+                "        ]\n" +
+                "    }";
+
+        //when & then
+        client.perform(MockMvcRequestBuilders.post("/companies")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(newCompany))
+                .andExpect(MockMvcResultMatchers.status().isCreated());
+
+        //should
+        List<Company> companies = companyService.findAllCompanies();
+        assertThat(companies.size(), equalTo(1));
+        assertThat(companies.get(0).getCompanyName(), equalTo("OOCL"));
+        assertThat(companies.get(0).getEmployees().size(), equalTo(3));
+    }
+
 //    @Test
 //    void should_get_employee_by_id_when_perform_given_employee_id() throws Exception {
 //        //given

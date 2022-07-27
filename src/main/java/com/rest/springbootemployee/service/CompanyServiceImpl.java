@@ -36,10 +36,11 @@ public class CompanyServiceImpl implements ICompany{
                 .collect(Collectors.toList());
     }
 
-    public List<Company> addCompany(Company company) {
-        companyRepository.companies.add(new Company(generateCompanyId(),
+    public int addCompany(Company company) {
+        int id = generateCompanyId();
+        companyRepository.companies.add(new Company(id,
                 company.getCompanyName(),company.getEmployees()));
-        return companyRepository.companies;
+        return id;
     }
 
     public Integer generateCompanyId() {

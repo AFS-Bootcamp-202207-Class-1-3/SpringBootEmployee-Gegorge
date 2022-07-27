@@ -11,7 +11,7 @@ public interface ICompany {
     Company findCompanyById(Integer id);
     List<Employee> findAllEmployeesByCompanyId(Integer id);
     List<Company> findCompanyByPage(int page, int pageSize);
-    List<Company> addCompany(Company company);
+    int addCompany(Company company);
     Integer generateCompanyId();
     Company updateCompanyById(Integer id);
     void removeCompanyById(Integer id);
