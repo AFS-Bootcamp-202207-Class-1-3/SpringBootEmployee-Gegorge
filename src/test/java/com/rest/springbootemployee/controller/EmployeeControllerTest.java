@@ -86,9 +86,9 @@ public class EmployeeControllerTest {
     @Test
     void should_get_employee_by_id_when_perform_given_employee_id() throws Exception {
         //given
-        employeeImpl.addEmployee(new Employee(2,"George",18,"male",190));
+        Employee employee = employeeImpl.addEmployee(new Employee(2, "George", 18, "male", 190));
         //when & then
-        client.perform(MockMvcRequestBuilders.get("/employees/1"))
+        client.perform(MockMvcRequestBuilders.get("/employees/{id}",employee.getId()))
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(MockMvcResultMatchers.jsonPath("$.id").isNumber())
                 .andExpect(MockMvcResultMatchers.jsonPath("$.name").value("George"))
@@ -107,28 +107,25 @@ public class EmployeeControllerTest {
     }
 
 
-//    @Test
-//    void should_get_employee_by_page_when_perform_given_page_and_pageSize() throws Exception {
-//        //given
-//        employeeImpl.addEmployee(new Employee(2,"George1",18,"male",190));
-//        employeeImpl.addEmployee(new Employee(2,"George2",18,"male",190));
-//        employeeImpl.addEmployee(new Employee(2,"George3",18,"male",190));
-//        MultiValueMap<String, Integer> params = new LinkedMultiValueMap<>();
-//        int page = 2;
-//        int pageSize = 2;
-//        params.put("page", Collections.singletonList(page));
-//        params.put("pageSize", Collections.singletonList(pageSize));
-//
-//        //when & then
-//        client.perform(MockMvcRequestBuilders.get("/employees")
-//                        .params(params))
-//                .andExpect(MockMvcResultMatchers.status().isOk())
-//                .andExpect(MockMvcResultMatchers.jsonPath("$.id").isNumber())
-//                .andExpect(MockMvcResultMatchers.jsonPath("$.name").value("George"))
-//                .andExpect(MockMvcResultMatchers.jsonPath("$.age").value(18))
-//                .andExpect(MockMvcResultMatchers.jsonPath("$.gender").value("male"))
-//                .andExpect(MockMvcResultMatchers.jsonPath("$.salary").value(190));
-//    }
+    @Test
+    void should_get_employee_by_page_when_perform_given_page_and_pageSize() throws Exception {
+        //given
+        employeeImpl.addEmployee(new Employee(1,"George1",18,"male",190));
+        employeeImpl.addEmployee(new Employee(2,"George2",18,"male",190));
+        employeeImpl.addEmployee(new Employee(3,"George3",18,"male",190));
+
+
+        //when & then
+        client.perform(MockMvcRequestBuilders.get("/employees")
+                .queryParam("page", "2").queryParam("pageSize", "2"))
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.jsonPath("$[0].id").value(3))
+                .andExpect(MockMvcResultMatchers.jsonPath("$[0].name").value("George3"))
+                .andExpect(MockMvcResultMatchers.jsonPath("$[0].age").value(18))
+                .andExpect(MockMvcResultMatchers.jsonPath("$[0].gender").value("male"))
+                .andExpect(MockMvcResultMatchers.jsonPath("$[0].salary").value(190));
+
+    }
 
 
 
