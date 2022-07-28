@@ -11,6 +11,7 @@ import org.mockito.Mock;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.util.ArrayList;
@@ -70,11 +71,12 @@ public class CompanyServiceTest {
         employees.add(new Employee(1, "George", 23, "male", 90, 100));
         Company company = new Company(1, "OOCL", employees);
         Company newCompany = new Company(1, "IQAX", employees);
-        given(jpaCompanyRepository.findById(1)).willReturn(Optional.of(company));
-        given(jpaCompanyRepository.saveAndFlush(newCompany)).willCallRealMethod();
+        int id = company.getId();
+        given(jpaCompanyRepository.findById(id)).willReturn(Optional.of(company));
+        given(jpaCompanyRepository.saveAndFlush(newCompany)).willReturn(newCompany);
 
         //when
-        Company updateCompany = companyService.updateCompanyById(1, newCompany);
+        Company updateCompany = companyService.updateCompanyById(id, newCompany);
 
         //then
         verify(jpaCompanyRepository).saveAndFlush(company);
@@ -108,7 +110,7 @@ public class CompanyServiceTest {
         Company company1 = companyService.addCompany(company);
 
         //then
-        assertThat(company1.getId(), equalTo(1));
+        assertThat(company1.getId(), equalTo(3));
     }
 
     @Test

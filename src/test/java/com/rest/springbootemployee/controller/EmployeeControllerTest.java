@@ -37,16 +37,15 @@ public class EmployeeControllerTest {
     @Autowired
     JpaCompanyRepository jpaCompanyRepository;
 
-    private Company initCompany;
     private int initCompanyId;
 
 
     @BeforeEach
-    void cleanDB() {
+    void setupDB() {
         jpaEmployeeRepository.deleteAll();
         Company company = new Company();
         company.setCompanyName("OOCL");
-        initCompany = jpaCompanyRepository.save(company);
+        Company initCompany = jpaCompanyRepository.save(company);
         initCompanyId = initCompany.getId();
     }
 

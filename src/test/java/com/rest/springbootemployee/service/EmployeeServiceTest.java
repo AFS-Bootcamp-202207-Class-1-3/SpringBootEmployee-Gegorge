@@ -24,7 +24,6 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
 @ExtendWith(SpringExtension.class)
-@ActiveProfiles("test")
 public class EmployeeServiceTest {
     @Mock
     JpaEmployeeRepository jpaEmployeeRepository;
