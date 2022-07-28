@@ -41,7 +41,4 @@ public class EmployeeServiceImpl implements IEmployee{
         return employeeRepository.findEmployeesByPage(page,pageSize);
     }
 
-    public void clearAll() {
-        employeeRepository.employees.clear();
-    }
 }

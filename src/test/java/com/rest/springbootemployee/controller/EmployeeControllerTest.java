@@ -1,6 +1,7 @@
 package com.rest.springbootemployee.controller;
 
 import com.rest.springbootemployee.entity.Employee;
+import com.rest.springbootemployee.repository.EmployeeRepository;
 import com.rest.springbootemployee.service.EmployeeServiceImpl;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -26,10 +27,12 @@ public class EmployeeControllerTest {
 
     @Autowired
     EmployeeServiceImpl employeeServiceImpl;
+    @Autowired
+    EmployeeRepository employeeRepository;
 
     @BeforeEach
     void cleanDB() {
-        employeeServiceImpl.clearAll();
+        employeeRepository.clearAll();
     }
 
     @Test
