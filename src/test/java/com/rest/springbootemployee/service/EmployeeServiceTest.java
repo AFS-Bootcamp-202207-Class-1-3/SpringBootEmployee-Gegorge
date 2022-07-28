@@ -2,15 +2,21 @@ package com.rest.springbootemployee.service;
 
 import com.rest.springbootemployee.entity.Employee;
 import com.rest.springbootemployee.repository.EmployeeRepository;
+import com.rest.springbootemployee.repository.JpaEmployeeRepository;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
@@ -19,9 +25,10 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
 @ExtendWith(SpringExtension.class)
+@ActiveProfiles("test")
 public class EmployeeServiceTest {
     @Mock
-    EmployeeRepository employeeRepository;
+    JpaEmployeeRepository jpaEmployeeRepository;
     @InjectMocks
     EmployeeServiceImpl employeeService;
     @Test
@@ -29,7 +36,7 @@ public class EmployeeServiceTest {
         //given
         List<Employee> employees = new ArrayList<>();
         employees.add(new Employee(1, "George", 23, "male", 90));
-        given(employeeRepository.findAllEmployee()).willReturn(employees);
+        given(jpaEmployeeRepository.findAll()).willReturn(employees);
 
         //when
         List<Employee> actualEmployees = employeeService.findAllEmployee();
@@ -44,7 +51,7 @@ public class EmployeeServiceTest {
         //given
         Employee employee = new Employee(1, "George", 23, "male", 90);
         int id = 1;
-        given(employeeRepository.findEmployeeById(id)).willReturn(employee);
+        given(jpaEmployeeRepository.findById(id)).willReturn(Optional.of(employee));
 
         //when
         Employee actualEmployee = employeeService.findEmployeeById(id);
@@ -59,14 +66,13 @@ public class EmployeeServiceTest {
         int newSalary = 100;
         Employee originalEmployee = new Employee(1, "Miky", 24, "female", 90);
         Employee updateEmployee = new Employee(2, "Miky", 24, "female", newSalary);
-        given(employeeRepository.findEmployeeById(1)).willReturn(originalEmployee);
-        given(employeeRepository.updateEmployeeById(1, updateEmployee)).willCallRealMethod();
+        given(jpaEmployeeRepository.findById(1)).willReturn(Optional.of(originalEmployee));
 
         //when
         Employee employee = employeeService.updateEmployee(1, updateEmployee);
 
         //then
-        verify(employeeRepository).updateEmployeeById(1, updateEmployee);
+        verify(jpaEmployeeRepository).saveAndFlush(originalEmployee);
     }
     
     @Test
@@ -78,7 +84,7 @@ public class EmployeeServiceTest {
                 new Employee(2, "George2", 23, "male", 90),
                 new Employee(3, "George3", 23, "male", 90)
         );
-        given(employeeRepository.findEmployeesByGender(gender)).willReturn(employees);
+        given(jpaEmployeeRepository.findByGender(gender)).willReturn(employees);
         
         //when
         List<Employee> employeesByGender = employeeService.findEmployeesByGender(gender);
@@ -91,13 +97,13 @@ public class EmployeeServiceTest {
     void should_return_id_when_add_employee_given_employee() {
         //given
         Employee employee = new Employee(1, "George1", 23, "male", 90);
-        given(employeeRepository.addEmployee(employee)).willReturn(1);
+        given(jpaEmployeeRepository.save(employee)).willReturn(employee);
 
         //when
-        Integer id = employeeService.addEmployee(employee);
+        Employee employee1 = employeeService.addEmployee(employee);
 
         //then
-        assertThat(id, equalTo(1));
+        assertThat(employee1.getId(), equalTo(1));
     }
 
     @Test
@@ -107,17 +113,24 @@ public class EmployeeServiceTest {
         //when
         employeeService.deleteEmployeeById(1);
         //then
-        verify(employeeRepository,times(1)).removeById(1);
+        verify(jpaEmployeeRepository,times(1)).deleteById(1);
     }
 
     @Test
     void should_return_employees_by_page_when_get_employee_given_page_and_pageSize() {
         //given
-
+        List<Employee> employees = Arrays.asList(
+                new Employee(1, "George1", 23, "male", 90),
+                new Employee(2, "George2", 23, "male", 90),
+                new Employee(3, "George3", 23, "male", 90)
+        );
+        PageRequest pageRequest = PageRequest.of(2,2);
+        Page<Employee> employeePage = new PageImpl<>(employees, pageRequest, employees.size());
+        given(jpaEmployeeRepository.findAll(pageRequest)).willReturn(employeePage);
         //when
-        employeeService.findEmployeeByPage(2,2);
+        employeeService.findEmployeeByPage(3,2);
         //then
-        verify(employeeRepository,times(1)).findEmployeesByPage(2,2);
+        verify(jpaEmployeeRepository,times(1)).findAll(pageRequest);
     }
 
 
