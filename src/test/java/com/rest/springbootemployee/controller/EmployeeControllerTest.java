@@ -30,15 +30,12 @@ public class EmployeeControllerTest {
 
     @Autowired
     EmployeeServiceImpl employeeServiceImpl;
-    @Autowired
-    EmployeeRepository employeeRepository;
 
     @Autowired
     JpaEmployeeRepository jpaEmployeeRepository;
 
     @BeforeEach
     void cleanDB() {
-        employeeRepository.clearAll();
         jpaEmployeeRepository.deleteAll();
     }
 
@@ -143,7 +140,7 @@ public class EmployeeControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(newEmployee))
                 .andExpect(MockMvcResultMatchers.status().isOk())
-                .andExpect(MockMvcResultMatchers.jsonPath("$.id").value(1))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.id").value(employee.getId()))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.name").value("George1111"))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.age").value(18))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.gender").value("male"))
