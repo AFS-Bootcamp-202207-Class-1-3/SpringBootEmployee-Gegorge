@@ -36,7 +36,7 @@ public class CompanyController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public Integer addCompany(@RequestBody Company company) {
+    public Company addCompany(@RequestBody Company company) {
         return companyServiceImpl.addCompany(company);
     }
 

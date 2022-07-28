@@ -3,47 +3,47 @@ package com.rest.springbootemployee.service;
 import com.rest.springbootemployee.entity.Company;
 import com.rest.springbootemployee.entity.Employee;
 import com.rest.springbootemployee.exception.NoSuchCompanyException;
-import com.rest.springbootemployee.repository.CompanyRepository;
+import com.rest.springbootemployee.repository.JpaCompanyRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 public class CompanyServiceImpl {
     @Autowired
-    private CompanyRepository companyRepository;
+    private JpaCompanyRepository jpaCompanyRepository;
+
     public List<Company> findAllCompanies() {
-        return companyRepository.findAllCompanies();
+        return jpaCompanyRepository.findAll();
     }
 
     public Company findCompanyById(Integer id) {
-        return companyRepository.findCompanyById(id);
+        return jpaCompanyRepository.findById(id).orElseThrow(NoSuchCompanyException::new);
     }
 
     public List<Employee> findAllEmployeesByCompanyId(Integer id) {
-        return companyRepository.findAllEmployeeByCompanyId(id);
+        return jpaCompanyRepository.findById(id).orElseThrow(NoSuchCompanyException::new).getEmployees();
     }
 
     public List<Company> findCompanyByPage(int page, int pageSize) {
-        return companyRepository.findCompanyByPage(page, pageSize);
+        PageRequest pageRequest = PageRequest.of(page - 1, pageSize);
+        return jpaCompanyRepository.findAll(pageRequest).toList();
     }
 
-    public int addCompany(Company company) {
-        return companyRepository.addCompany(company);
+    public Company addCompany(Company company) {
+        return jpaCompanyRepository.save(company);
     }
 
 
     public Company updateCompanyById(Integer id,Company updateCompany) {
-        return companyRepository.updateCompanyById(id, updateCompany);
+        Company company = findCompanyById(id);
+        company.merge(updateCompany);
+        return jpaCompanyRepository.saveAndFlush(company);
     }
 
     public void removeCompanyById(Integer id) {
-        companyRepository.removeById(id);
-    }
-
-    public void clearAll() {
-        companyRepository.companies.clear();
+        jpaCompanyRepository.deleteById(id);
     }
 }

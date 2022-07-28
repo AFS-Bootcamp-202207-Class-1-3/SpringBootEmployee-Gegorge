@@ -2,6 +2,8 @@ package com.rest.springbootemployee.controller;
 
 import com.rest.springbootemployee.entity.Company;
 import com.rest.springbootemployee.entity.Employee;
+import com.rest.springbootemployee.repository.JpaCompanyRepository;
+import com.rest.springbootemployee.repository.JpaEmployeeRepository;
 import com.rest.springbootemployee.service.CompanyServiceImpl;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -14,6 +16,7 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -28,24 +31,35 @@ public class CompanyControllerTest {
 
     @Autowired
     CompanyServiceImpl companyService;
+    @Autowired
+    JpaCompanyRepository jpaCompanyRepository;
+    @Autowired
+    JpaEmployeeRepository jpaEmployeeRepository;
 
     @BeforeEach
     void cleanDB() {
-        companyService.clearAll();
+        jpaCompanyRepository.deleteAll();
     }
 
     @Test
     void should_get_all_companies_when_perform_given_employees() throws Exception {
         //given
-        Employee employee = new Employee(1, "George", 18, "male", 190);
-        companyService.addCompany(new Company(1,"OOCL", Arrays.asList(employee)));
+        Company company1 = companyService.addCompany(new Company(1, "OOCL", Collections.emptyList()));
+        jpaEmployeeRepository.save(new Employee(1,"George1",20,"male",23,company1.getId()));
+        jpaEmployeeRepository.save(new Employee(2,"George2",20,"male",23,company1.getId()));
+
+        Company company2 = companyService.addCompany(new Company(1, "OOIL", Collections.emptyList()));
+        jpaEmployeeRepository.save(new Employee(3,"George3",20,"male",23,company2.getId()));
+        jpaEmployeeRepository.save(new Employee(4,"George4",20,"male",23,company2.getId()));
 
         //when & then
         client.perform(MockMvcRequestBuilders.get("/companies"))
                 .andExpect(MockMvcResultMatchers.status().isOk())
-                .andExpect(MockMvcResultMatchers.jsonPath("$.*",hasSize(1)))
-                .andExpect(MockMvcResultMatchers.jsonPath("$[0].id").value(1))
-                .andExpect(MockMvcResultMatchers.jsonPath("$[0].companyName").value("OOCL"));
+                .andExpect(MockMvcResultMatchers.jsonPath("$.*",hasSize(2)))
+                .andExpect(MockMvcResultMatchers.jsonPath("$[0].id").value(company1.getId()))
+                .andExpect(MockMvcResultMatchers.jsonPath("$[0].companyName").value("OOCL"))
+                .andExpect(MockMvcResultMatchers.jsonPath("$[1].companyName").value("OOIL"))
+                .andExpect(MockMvcResultMatchers.jsonPath("$[1].employees.size").value(2));
     }
 
     @Test
@@ -95,11 +109,11 @@ public class CompanyControllerTest {
     @Test
     void should_get_company_by_id_when_perform_given_company_id() throws Exception {
         //given
-        Employee employee = new Employee(1, "George", 18, "male", 190);
-        int id1 = companyService.addCompany(new Company(1, "OOCL", Arrays.asList(employee)));
-        int id2 = companyService.addCompany(new Company(2, "IQAX", Arrays.asList(employee)));
+        Employee employee = new Employee(1, "George", 18, "male", 190, 100);
+        Company company1 = companyService.addCompany(new Company(1, "OOCL", Arrays.asList(employee)));
+        Company company2 = companyService.addCompany(new Company(2, "IQAX", Arrays.asList(employee)));
         //when & then
-        client.perform(MockMvcRequestBuilders.get("/companies/{id}",id2))
+        client.perform(MockMvcRequestBuilders.get("/companies/{id}",company2.getId()))
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(MockMvcResultMatchers.jsonPath("$.id").isNumber())
                 .andExpect(MockMvcResultMatchers.jsonPath("$.companyName").value("IQAX"));
@@ -108,16 +122,16 @@ public class CompanyControllerTest {
     @Test
     void should_throw_no_such_company_exception_when_perform_given_wrong_company_id() throws Exception {
         //given
-        Employee employee = new Employee(1, "George", 18, "male", 190);
-        int id = companyService.addCompany(new Company(1, "OOCL", Arrays.asList(employee)));
+        Employee employee = new Employee(1, "George", 18, "male", 190, 100);
+        Company company = companyService.addCompany(new Company(1, "OOCL", Arrays.asList(employee)));
         //when & then
-        client.perform(MockMvcRequestBuilders.get("/companies/{id}",2))
+        client.perform(MockMvcRequestBuilders.get("/companies/{id}",company.getId()))
                 .andExpect(MockMvcResultMatchers.status().isNotFound());
     }
     @Test
     void should_get_companies_by_page_when_perform_given_page_and_pageSize() throws Exception {
         //given
-        Employee employee = new Employee(1, "George", 18, "male", 190);
+        Employee employee = new Employee(1, "George", 18, "male", 190, 100);
         companyService.addCompany(new Company(1, "OOCL", Arrays.asList(employee)));
         companyService.addCompany(new Company(2, "IQAX", Arrays.asList(employee)));
         companyService.addCompany(new Company(3, "OOIL", Arrays.asList(employee)));
@@ -135,8 +149,8 @@ public class CompanyControllerTest {
     @Test
     void should_update_employee_salary_to_300_by_id_when_perform_given_update_employee() throws Exception {
         //given
-        Employee employee = new Employee(1, "George", 18, "male", 190);
-        int id = companyService.addCompany(new Company(1, "OOCL", Arrays.asList(employee)));
+        Employee employee = new Employee(1, "George", 18, "male", 190, 100);
+        Company company = companyService.addCompany(new Company(1, "OOCL", Arrays.asList(employee)));
         String newCompany = "    {\n" +
                 "        \"id\": 1,\n" +
                 "        \"companyName\": \"OOIL\",\n" +
@@ -165,7 +179,7 @@ public class CompanyControllerTest {
                 "        ]\n" +
                 "    }";
         //when & then
-        client.perform(MockMvcRequestBuilders.put("/companies/{id}",id)
+        client.perform(MockMvcRequestBuilders.put("/companies/{id}",company.getId())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(newCompany))
                 .andExpect(MockMvcResultMatchers.status().isOk())
@@ -177,23 +191,23 @@ public class CompanyControllerTest {
     @Test
     void should_delete_company_by_id_when_perform_given_delete_company_id() throws Exception {
         //given
-        Employee employee = new Employee(1, "George", 18, "male", 190);
-        int id = companyService.addCompany(new Company(1, "OOCL", Arrays.asList(employee)));
+        Employee employee = new Employee(1, "George", 18, "male", 190, 100);
+        Company company = companyService.addCompany(new Company(1, "OOCL", Arrays.asList(employee)));
 
         //when & then
-        client.perform(MockMvcRequestBuilders.delete("/companies/{id}", id)
+        client.perform(MockMvcRequestBuilders.delete("/companies/{id}", company.getId())
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(MockMvcResultMatchers.status().isNoContent());
     }
     @Test
     void should_get_all_employees_when_perform_given_company_id() throws Exception {
         //given
-        Employee employee1 = new Employee(1, "George1", 18, "male", 188);
-        Employee employee2 = new Employee(1, "George2", 18, "male", 190);
-        int id = companyService.addCompany(new Company(1, "OOCL", Arrays.asList(employee1,employee2)));
+        Employee employee1 = new Employee(1, "George1", 18, "male", 188, 100);
+        Employee employee2 = new Employee(1, "George2", 18, "male", 190, 100);
+        Company company = companyService.addCompany(new Company(1, "OOCL", Arrays.asList(employee1,employee2)));
 
         //when & then
-        client.perform(MockMvcRequestBuilders.get("/companies/{id}/employees",id)
+        client.perform(MockMvcRequestBuilders.get("/companies/{id}/employees",company.getId())
                         .queryParam("gender", "female"))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.size()").value(2))
                 .andExpect(MockMvcResultMatchers.jsonPath("$[0].name").value("George1"))

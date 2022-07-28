@@ -2,7 +2,6 @@ package com.rest.springbootemployee.service;
 
 import com.rest.springbootemployee.entity.Employee;
 import com.rest.springbootemployee.exception.NoSuchEmployeeException;
-import com.rest.springbootemployee.repository.EmployeeRepository;
 import com.rest.springbootemployee.repository.JpaEmployeeRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -13,8 +12,6 @@ import java.util.List;
 
 @Service
 public class EmployeeServiceImpl {
-    @Autowired
-    private EmployeeRepository employeeRepository;
     @Autowired
     private JpaEmployeeRepository jpaEmployeeRepository;
 

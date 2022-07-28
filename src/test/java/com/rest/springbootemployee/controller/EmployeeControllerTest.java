@@ -1,7 +1,8 @@
 package com.rest.springbootemployee.controller;
 
+import com.rest.springbootemployee.entity.Company;
 import com.rest.springbootemployee.entity.Employee;
-import com.rest.springbootemployee.repository.EmployeeRepository;
+import com.rest.springbootemployee.repository.JpaCompanyRepository;
 import com.rest.springbootemployee.repository.JpaEmployeeRepository;
 import com.rest.springbootemployee.service.EmployeeServiceImpl;
 import org.junit.jupiter.api.BeforeEach;
@@ -33,16 +34,26 @@ public class EmployeeControllerTest {
 
     @Autowired
     JpaEmployeeRepository jpaEmployeeRepository;
+    @Autowired
+    JpaCompanyRepository jpaCompanyRepository;
+
+    private Company initCompany;
+    private int initCompanyId;
+
 
     @BeforeEach
     void cleanDB() {
         jpaEmployeeRepository.deleteAll();
+        Company company = new Company();
+        company.setCompanyName("OOCL");
+        initCompany = jpaCompanyRepository.save(company);
+        initCompanyId = initCompany.getId();
     }
 
     @Test
     void should_get_all_employees_when_perform_given_employees() throws Exception {
         //given
-        employeeServiceImpl.addEmployee(new Employee(1,"George",18,"male",190));
+        employeeServiceImpl.addEmployee(new Employee(1,"George",18,"male",190,initCompanyId));
 
         //when & then
         client.perform(MockMvcRequestBuilders.get("/employees"))
@@ -56,12 +67,14 @@ public class EmployeeControllerTest {
     @Test
     void should_create_new_employee_when_perform_post_given_new_employee() throws Exception {
         //given
+
         String newEmployee = "       {\n" +
                 "        \"id\": 1,\n" +
                 "        \"name\": \"George1\",\n" +
                 "        \"age\": 18,\n" +
                 "        \"gender\": \"male\",\n" +
-                "        \"salary\": 180\n" +
+                "        \"salary\": 180,\n" +
+                "        \"companyId\": "+initCompanyId+"\n" +
                 "    }";
 
         //when & then
@@ -82,7 +95,8 @@ public class EmployeeControllerTest {
     @Test
     void should_get_employee_by_id_when_perform_given_employee_id() throws Exception {
         //given
-        Employee employee = employeeServiceImpl.addEmployee(new Employee(2, "George", 18, "male", 190));
+        Employee employee = employeeServiceImpl.addEmployee(
+                new Employee(2, "George", 18, "male", 190,initCompanyId));
         //when & then
         client.perform(MockMvcRequestBuilders.get("/employees/{id}",employee.getId()))
                 .andExpect(MockMvcResultMatchers.status().isOk())
@@ -96,7 +110,8 @@ public class EmployeeControllerTest {
     @Test
     void should_throw_no_such_employee_exception_when_perform_given_wrong_employee_id() throws Exception {
         //given
-        employeeServiceImpl.addEmployee(new Employee(2,"George",18,"male",190));
+        employeeServiceImpl.addEmployee(
+                new Employee(2, "George", 18, "male", 190,initCompanyId));
         //when & then
         client.perform(MockMvcRequestBuilders.get("/employees/2"))
                 .andExpect(MockMvcResultMatchers.status().isNotFound());
@@ -106,9 +121,12 @@ public class EmployeeControllerTest {
     @Test
     void should_get_employee_by_page_when_perform_given_page_and_pageSize() throws Exception {
         //given
-        Employee employee1 = employeeServiceImpl.addEmployee(new Employee(1, "George1", 18, "male", 190));
-        Employee employee2 = employeeServiceImpl.addEmployee(new Employee(2, "George2", 18, "male", 190));
-        Employee employee3 = employeeServiceImpl.addEmployee(new Employee(3, "George3", 18, "male", 190));
+        Employee employee1 = employeeServiceImpl.addEmployee(
+                new Employee(1, "George1", 18, "male", 190,initCompanyId));
+        Employee employee2 = employeeServiceImpl.addEmployee(
+                new Employee(2, "George2", 18, "male", 190,initCompanyId));
+        Employee employee3 = employeeServiceImpl.addEmployee(
+                new Employee(3, "George3", 18, "male", 190,initCompanyId));
 
 
         //when & then
@@ -127,7 +145,7 @@ public class EmployeeControllerTest {
     void should_update_employee_salary_to_300_by_id_when_perform_given_update_employee() throws Exception {
         //given
         Employee employee = employeeServiceImpl.addEmployee(
-                new Employee(1, "George", 18, "male", 190));
+                new Employee(1, "George", 18, "male", 190,initCompanyId));
         String newEmployee = "    {\n" +
                 "        \"id\": 1,\n" +
                 "        \"name\": \"George1111\",\n" +
@@ -151,7 +169,7 @@ public class EmployeeControllerTest {
     void should_delete_employee_by_id_when_perform_given_delete_employee() throws Exception {
         //given
         Employee employee = employeeServiceImpl
-                .addEmployee(new Employee(1, "George1", 18, "male", 190));
+                .addEmployee(new Employee(1, "George1", 18, "male", 190,initCompanyId));
 
         //when & then
         client.perform(MockMvcRequestBuilders.delete("/employees/{id}", employee.getId())
@@ -162,8 +180,8 @@ public class EmployeeControllerTest {
     @Test
     void should_get_employee_by_gender_when_perform_given_gender() throws Exception {
         //given
-        employeeServiceImpl.addEmployee(new Employee(1, "George1", 18, "male", 180));
-        employeeServiceImpl.addEmployee(new Employee(2, "George2", 18, "female", 1801));
+        employeeServiceImpl.addEmployee(new Employee(1, "George1", 18, "male", 180,initCompanyId));
+        employeeServiceImpl.addEmployee(new Employee(2, "George2", 18, "female", 1801,initCompanyId));
 
         //when & then
         client.perform(MockMvcRequestBuilders.get("/employees")
