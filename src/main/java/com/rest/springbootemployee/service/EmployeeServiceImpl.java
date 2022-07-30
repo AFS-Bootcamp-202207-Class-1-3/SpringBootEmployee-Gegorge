@@ -26,7 +26,8 @@ public class EmployeeServiceImpl {
         return jpaEmployeeRepository.findByGender(gender);
     }
 
-    public Employee addEmployee(Employee employee) {
+    public Employee
+    addEmployee(Employee employee) {
         return jpaEmployeeRepository.save(employee);
     }
 

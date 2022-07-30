@@ -1,5 +1,7 @@
 package com.rest.springbootemployee.controller;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.rest.springbootemployee.dto.EmployeeRequest;
 import com.rest.springbootemployee.entity.Company;
 import com.rest.springbootemployee.entity.Employee;
 import com.rest.springbootemployee.repository.JpaCompanyRepository;
@@ -67,14 +69,14 @@ public class EmployeeControllerTest {
     void should_create_new_employee_when_perform_post_given_new_employee() throws Exception {
         //given
 
-        String newEmployee = "       {\n" +
-                "        \"id\": 1,\n" +
-                "        \"name\": \"George1\",\n" +
-                "        \"age\": 18,\n" +
-                "        \"gender\": \"male\",\n" +
-                "        \"salary\": 180,\n" +
-                "        \"companyId\": "+initCompanyId+"\n" +
-                "    }";
+        EmployeeRequest request = new EmployeeRequest();
+        request.setName("George1");
+        request.setAge(18);
+        request.setSalary(180);
+        request.setGender("male");
+        request.setCompanyId(initCompanyId);
+
+        String newEmployee = new ObjectMapper().writeValueAsString(request);
 
         //when & then
         client.perform(MockMvcRequestBuilders.post("/employees")

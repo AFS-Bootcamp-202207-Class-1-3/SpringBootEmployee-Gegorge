@@ -16,6 +16,7 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -45,9 +46,11 @@ public class CompanyControllerTest {
 
 
     @BeforeEach
+//    @Transactional
     void setupDB() {
         jpaCompanyRepository.deleteAll();
         jpaEmployeeRepository.deleteAll();
+//        jpaCompanyRepository.truncateMyTable();
         Company company = new Company();
         company.setCompanyName("OOCL");
         Company initCompany = jpaCompanyRepository.save(company);
@@ -142,7 +145,7 @@ public class CompanyControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(newCompany))
                 .andExpect(MockMvcResultMatchers.status().isOk())
-                .andExpect(MockMvcResultMatchers.jsonPath("$.id").value(1))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.id").value(2))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.companyName").value("IQAX"));
     }
 
