@@ -8,13 +8,13 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class EmployeeMapper {
-    public Employee toEntity(EmployeeRequest request) {
+    public Employee convertToEntity(EmployeeRequest request) {
         Employee employee = new Employee();
         BeanUtils.copyProperties(request, employee);
         return employee;
     }
 
-    public EmployeeResponse toResponse(Employee employee) {
+    public EmployeeResponse convertToVO(Employee employee) {
         EmployeeResponse response = new EmployeeResponse();
         BeanUtils.copyProperties(employee, response);
         return response;
