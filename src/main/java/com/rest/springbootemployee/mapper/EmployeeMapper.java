@@ -6,6 +6,9 @@ import com.rest.springbootemployee.entity.Employee;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Component;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Component
 public class EmployeeMapper {
     public Employee convertToEntity(EmployeeRequest request) {
@@ -18,5 +21,15 @@ public class EmployeeMapper {
         EmployeeResponse response = new EmployeeResponse();
         BeanUtils.copyProperties(employee, response);
         return response;
+    }
+
+    public List<EmployeeResponse> convertToVOs(List<Employee> employees) {
+        List<EmployeeResponse> responses = new ArrayList<>();
+        for (Employee employee : employees) {
+            EmployeeResponse response = new EmployeeResponse();
+            BeanUtils.copyProperties(employee, response);
+            responses.add(response);
+        }
+        return responses;
     }
 }

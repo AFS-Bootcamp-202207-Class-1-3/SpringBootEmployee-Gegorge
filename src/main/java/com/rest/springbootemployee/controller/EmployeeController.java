@@ -19,17 +19,20 @@ public class EmployeeController {
     @Autowired
     private EmployeeMapper employeeMapper;
     @GetMapping
-    public List<Employee> getAllEmployees() {
-        return employeeServiceImpl.findAllEmployee();
+    public List<EmployeeResponse> getAllEmployees() {
+        List<Employee> employees = employeeServiceImpl.findAllEmployee();
+        return employeeMapper.convertToVOs(employees);
     }
     @GetMapping(path = "/{id}")
-    public Employee getEmployeeById(@PathVariable Integer id) {
-        return employeeServiceImpl.findEmployeeById(id);
+    public EmployeeResponse getEmployeeById(@PathVariable Integer id) {
+        Employee employee = employeeServiceImpl.findEmployeeById(id);
+        return employeeMapper.convertToVO(employee);
     }
 
     @GetMapping(params = {"gender"})
-    public List<Employee> getEmployeesByGender(@RequestParam String gender) {
-        return employeeServiceImpl.findEmployeesByGender(gender);
+    public List<EmployeeResponse> getEmployeesByGender(@RequestParam String gender) {
+        List<Employee> employees = employeeServiceImpl.findEmployeesByGender(gender);
+        return employeeMapper.convertToVOs(employees);
     }
 
     @PostMapping
@@ -41,8 +44,9 @@ public class EmployeeController {
     }
 
     @PutMapping(path = "/{id}")
-    public Employee updateEmployeeById(@PathVariable Integer id, @RequestBody Employee employee) {
-        return employeeServiceImpl.updateEmployee(id, employee);
+    public EmployeeResponse updateEmployeeById(@PathVariable Integer id, @RequestBody EmployeeRequest request) {
+        Employee updatedEmployee = employeeServiceImpl.updateEmployee(id, employeeMapper.convertToEntity(request));
+        return employeeMapper.convertToVO(updatedEmployee);
     }
 
     @DeleteMapping(path = "/{id}")
@@ -52,7 +56,8 @@ public class EmployeeController {
     }
 
     @GetMapping(params = {"page","pageSize"})
-    public List<Employee> getEmployeeByPage(@RequestParam int page, int pageSize) {
-        return employeeServiceImpl.findEmployeeByPage(page, pageSize);
+    public List<EmployeeResponse> getEmployeeByPage(@RequestParam int page, int pageSize) {
+        List<Employee> employees = employeeServiceImpl.findEmployeeByPage(page, pageSize);
+        return employeeMapper.convertToVOs(employees);
     }
 }
