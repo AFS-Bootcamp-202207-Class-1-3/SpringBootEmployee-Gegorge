@@ -20,6 +20,7 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
 import java.util.List;
+import java.util.Objects;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
@@ -109,13 +110,15 @@ public class EmployeeControllerTest {
     }
 
     @Test
-    void should_throw_no_such_employee_exception_when_perform_given_wrong_employee_id() throws Exception {
+    void should_throw_no_found_employee_exception_when_perform_given_wrong_employee_id() throws Exception {
         //given
         employeeServiceImpl.addEmployee(
                 new Employee(2, "George", 18, "male", 190, initCompanyId));
         //when & then
         client.perform(MockMvcRequestBuilders.get("/employees/{id}", 3))
-                .andExpect(MockMvcResultMatchers.status().isNotFound());
+                .andExpect(MockMvcResultMatchers.status().isNotFound())
+                .andExpect(exception -> assertThat("Not Found: employee",
+                        equalTo(Objects.requireNonNull(exception.getResolvedException()).getMessage())));
     }
 
 

@@ -2,7 +2,7 @@ package com.rest.springbootemployee.service;
 
 import com.rest.springbootemployee.entity.Company;
 import com.rest.springbootemployee.entity.Employee;
-import com.rest.springbootemployee.exception.NoSuchCompanyException;
+import com.rest.springbootemployee.exception.NotFoundException;
 import com.rest.springbootemployee.repository.JpaCompanyRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
@@ -20,11 +20,12 @@ public class CompanyServiceImpl {
     }
 
     public Company findCompanyById(Integer id) {
-        return jpaCompanyRepository.findById(id).orElseThrow(NoSuchCompanyException::new);
+        return jpaCompanyRepository.findById(id)
+                .orElseThrow(() -> new NotFoundException(Company.class.getSimpleName()));
     }
 
     public List<Employee> findAllEmployeesByCompanyId(Integer id) {
-        return jpaCompanyRepository.findById(id).orElseThrow(NoSuchCompanyException::new).getEmployees();
+        return findCompanyById(id).getEmployees();
     }
 
     public List<Company> findCompanyByPage(int page, int pageSize) {

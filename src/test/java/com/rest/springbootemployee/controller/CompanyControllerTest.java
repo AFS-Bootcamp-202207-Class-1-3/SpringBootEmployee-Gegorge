@@ -7,23 +7,20 @@ import com.rest.springbootemployee.entity.Employee;
 import com.rest.springbootemployee.repository.JpaCompanyRepository;
 import com.rest.springbootemployee.repository.JpaEmployeeRepository;
 import com.rest.springbootemployee.service.CompanyServiceImpl;
-import com.sun.org.apache.regexp.internal.RE;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
-import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -106,15 +103,6 @@ public class CompanyControllerTest {
     }
 
     @Test
-    void should_throw_no_such_company_exception_when_perform_given_wrong_company_id() throws Exception {
-        //given
-
-        //when & then
-        client.perform(MockMvcRequestBuilders.get("/companies/{id}", 1))
-                .andExpect(MockMvcResultMatchers.status().isNotFound());
-    }
-
-    @Test
     void should_get_companies_by_page_when_perform_given_page_and_pageSize() throws Exception {
         //given
         jpaCompanyRepository.save(new Company(1, "CargoSmart", Collections.emptyList()));
@@ -130,12 +118,14 @@ public class CompanyControllerTest {
     }
 
     @Test
-    void should_throw_no_such_company_exception_when_perform_given_wrong_companyId() throws Exception {
+    void should_throw_not_found_company_exception_when_perform_given_wrong_company_id() throws Exception {
         //given
 
         //when & then
-        client.perform(MockMvcRequestBuilders.get("/employees/{id}", 1))
-                .andExpect(MockMvcResultMatchers.status().isNotFound());
+        client.perform(MockMvcRequestBuilders.get("/companies/{id}", 1))
+                .andExpect(MockMvcResultMatchers.status().isNotFound())
+                .andExpect(exception -> assertThat("Not Found: company",
+                        equalTo(Objects.requireNonNull(exception.getResolvedException()).getMessage())));
     }
 
     @Test

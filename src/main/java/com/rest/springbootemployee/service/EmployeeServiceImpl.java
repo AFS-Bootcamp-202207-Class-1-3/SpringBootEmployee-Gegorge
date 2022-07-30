@@ -1,7 +1,7 @@
 package com.rest.springbootemployee.service;
 
 import com.rest.springbootemployee.entity.Employee;
-import com.rest.springbootemployee.exception.NoSuchEmployeeException;
+import com.rest.springbootemployee.exception.NotFoundException;
 import com.rest.springbootemployee.repository.JpaEmployeeRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -20,7 +20,8 @@ public class EmployeeServiceImpl {
     }
 
     public Employee findEmployeeById(Integer id) {
-        return jpaEmployeeRepository.findById(id).orElseThrow(NoSuchEmployeeException::new);
+        return jpaEmployeeRepository.findById(id)
+                .orElseThrow(() -> new NotFoundException(Employee.class.getSimpleName()));
     }
 
     public List<Employee> findEmployeesByGender(String gender) {
