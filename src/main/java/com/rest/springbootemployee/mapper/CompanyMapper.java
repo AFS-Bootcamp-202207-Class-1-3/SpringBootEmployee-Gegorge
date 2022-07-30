@@ -6,6 +6,9 @@ import com.rest.springbootemployee.vo.CompanyResponse;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Component;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Component
 public class CompanyMapper {
     public Company convertToEntity(CompanyRequest request) {
@@ -18,6 +21,16 @@ public class CompanyMapper {
         CompanyResponse response = new CompanyResponse();
         BeanUtils.copyProperties(company, response);
         return response;
+    }
+
+    public List<CompanyResponse> convertToVOs(List<Company> companies) {
+        List<CompanyResponse> responses = new ArrayList<>();
+        for (Company company : companies) {
+            CompanyResponse response = new CompanyResponse();
+            BeanUtils.copyProperties(company, response);
+            responses.add(response);
+        }
+        return responses;
     }
 
 }

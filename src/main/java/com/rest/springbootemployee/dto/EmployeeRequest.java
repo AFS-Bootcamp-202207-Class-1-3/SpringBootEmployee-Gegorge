@@ -32,12 +32,12 @@ public class EmployeeRequest {
         return gender;
     }
 
-    public void setGender(String gender) {
-        this.gender = gender;
-    }
-
     public Integer getSalary() {
         return salary;
+    }
+
+    public void setGender(String gender) {
+        this.gender = gender;
     }
 
     public void setSalary(Integer salary) {

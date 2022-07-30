@@ -31,14 +31,15 @@ public class CompanyServiceTest {
     JpaCompanyRepository jpaCompanyRepository;
     @InjectMocks
     CompanyServiceImpl companyService;
+
     @Test
     void should_return_all_employee_when_get_all_employees() {
         //given
         List<Employee> employees = new ArrayList<>();
         employees.add(new Employee(1, "George", 23, "male", 90, 100));
         List<Company> companies = Arrays.asList(
-                new Company(1,"OOCL",employees),
-                new Company(2,"IQAX",employees));
+                new Company(1, "OOCL", employees),
+                new Company(2, "IQAX", employees));
         given(jpaCompanyRepository.findAll()).willReturn(companies);
 
         //when
@@ -49,6 +50,7 @@ public class CompanyServiceTest {
         assertThat(actualCompanies.get(0).getCompanyName(), equalTo("OOCL"));
         assertThat(actualCompanies.get(1).getCompanyName(), equalTo("IQAX"));
     }
+
     @Test
     void should_return_company_when_find_by_id_given_company_id() {
         //given
@@ -81,6 +83,7 @@ public class CompanyServiceTest {
         //then
         verify(jpaCompanyRepository).saveAndFlush(company);
     }
+
     @Test
     void should_return_employees_when_find_employees_given_company_id() {
         //given
@@ -120,7 +123,7 @@ public class CompanyServiceTest {
         //when
         companyService.removeCompanyById(1);
         //then
-        verify(jpaCompanyRepository,times(1)).deleteById(1);
+        verify(jpaCompanyRepository, times(1)).deleteById(1);
     }
 
     @Test
@@ -131,16 +134,16 @@ public class CompanyServiceTest {
         employees.add(new Employee(2, "George2", 23, "male", 903, 100));
         List<Company> companies = Arrays.asList(
                 new Company(1, "OOCL", employees),
-                new Company(2, "IQAX",employees),
-                new Company(3, "OOIL",employees)
+                new Company(2, "IQAX", employees),
+                new Company(3, "OOIL", employees)
         );
-        PageRequest pageRequest = PageRequest.of(2,2);
+        PageRequest pageRequest = PageRequest.of(2, 2);
         Page<Company> companyPage = new PageImpl<>(companies, pageRequest, companies.size());
         given(jpaCompanyRepository.findAll(pageRequest)).willReturn(companyPage);
         //when
-        companyService.findCompanyByPage(3,2);
+        companyService.findCompanyByPage(3, 2);
         //then
-        verify(jpaCompanyRepository,times(1)).findAll(pageRequest);
+        verify(jpaCompanyRepository, times(1)).findAll(pageRequest);
     }
 
 }

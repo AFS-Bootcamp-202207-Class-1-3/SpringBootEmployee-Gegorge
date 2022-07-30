@@ -1,8 +1,13 @@
 package com.rest.springbootemployee.controller;
 
+import com.rest.springbootemployee.dto.CompanyRequest;
 import com.rest.springbootemployee.entity.Company;
 import com.rest.springbootemployee.entity.Employee;
+import com.rest.springbootemployee.mapper.CompanyMapper;
+import com.rest.springbootemployee.mapper.EmployeeMapper;
 import com.rest.springbootemployee.service.CompanyServiceImpl;
+import com.rest.springbootemployee.vo.CompanyResponse;
+import com.rest.springbootemployee.vo.EmployeeResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
@@ -14,35 +19,46 @@ import java.util.List;
 public class CompanyController {
     @Autowired
     private CompanyServiceImpl companyServiceImpl;
+    @Autowired
+    private CompanyMapper companyMapper;
+    @Autowired
+    private EmployeeMapper employeeMapper;
+
     @GetMapping
-    public List<Company> getAllCompanies() {
-        return companyServiceImpl.findAllCompanies();
+    public List<CompanyResponse> getAllCompanies() {
+        List<Company> companies = companyServiceImpl.findAllCompanies();
+        return companyMapper.convertToVOs(companies);
     }
 
     @GetMapping(path = "/{id}")
-    public Company getCompaniesById(@PathVariable Integer id) {
-        return companyServiceImpl.findCompanyById(id);
+    public CompanyResponse getCompaniesById(@PathVariable Integer id) {
+        Company company = companyServiceImpl.findCompanyById(id);
+        return companyMapper.convertToVO(company);
     }
 
     @GetMapping(path = "/{id}/employees")
-    public List<Employee> getAllEmployeesByCompanyId(@PathVariable Integer id) {
-        return companyServiceImpl.findAllEmployeesByCompanyId(id);
+    public List<EmployeeResponse> getAllEmployeesByCompanyId(@PathVariable Integer id) {
+        List<Employee> employees = companyServiceImpl.findAllEmployeesByCompanyId(id);
+        return employeeMapper.convertToVOs(employees);
     }
 
-    @GetMapping(params = {"page","pageSize"})
-    public List<Company> getCompanyByPage(@RequestParam int page, int pageSize) {
-        return companyServiceImpl.findCompanyByPage(page, pageSize);
+    @GetMapping(params = {"page", "pageSize"})
+    public List<CompanyResponse> getCompanyByPage(@RequestParam int page, int pageSize) {
+        List<Company> companies = companyServiceImpl.findCompanyByPage(page, pageSize);
+        return companyMapper.convertToVOs(companies);
     }
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public Company addCompany(@RequestBody Company company) {
-        return companyServiceImpl.addCompany(company);
+    public CompanyResponse addCompany(@RequestBody CompanyRequest request) {
+        Company company = companyServiceImpl.addCompany(companyMapper.convertToEntity(request));
+        return companyMapper.convertToVO(company);
     }
 
     @PutMapping(path = "/{id}")
-    public Company updateCompanyById(@PathVariable Integer id,@RequestBody Company company) {
-        return companyServiceImpl.updateCompanyById(id, company);
+    public CompanyResponse updateCompanyById(@PathVariable Integer id, @RequestBody CompanyRequest request) {
+        Company company = companyServiceImpl.updateCompanyById(id, companyMapper.convertToEntity(request));
+        return companyMapper.convertToVO(company);
     }
 
     @DeleteMapping(path = "/{id}")

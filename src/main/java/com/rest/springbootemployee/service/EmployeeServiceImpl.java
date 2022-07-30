@@ -18,6 +18,7 @@ public class EmployeeServiceImpl {
     public List<Employee> findAllEmployee() {
         return jpaEmployeeRepository.findAll();
     }
+
     public Employee findEmployeeById(Integer id) {
         return jpaEmployeeRepository.findById(id).orElseThrow(NoSuchEmployeeException::new);
     }
@@ -26,8 +27,7 @@ public class EmployeeServiceImpl {
         return jpaEmployeeRepository.findByGender(gender);
     }
 
-    public Employee
-    addEmployee(Employee employee) {
+    public Employee addEmployee(Employee employee) {
         return jpaEmployeeRepository.save(employee);
     }
 

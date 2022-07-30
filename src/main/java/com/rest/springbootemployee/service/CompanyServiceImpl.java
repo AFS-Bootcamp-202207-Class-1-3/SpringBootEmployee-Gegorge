@@ -37,7 +37,7 @@ public class CompanyServiceImpl {
     }
 
 
-    public Company updateCompanyById(Integer id,Company updateCompany) {
+    public Company updateCompanyById(Integer id, Company updateCompany) {
         Company company = findCompanyById(id);
         company.merge(updateCompany);
         return jpaCompanyRepository.saveAndFlush(company);

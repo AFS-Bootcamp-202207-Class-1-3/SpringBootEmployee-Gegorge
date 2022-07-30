@@ -74,9 +74,17 @@ public class Employee {
     }
 
     public void merge(Employee employee) {
-        this.name = employee.getName();
-        this.age = employee.getAge();
-        this.salary = employee.getSalary();
-        this.gender = employee.getGender();
+        if (employee.getName() != null) {
+            this.name = employee.getName();
+        }
+        if (employee.getAge() != null) {
+            this.age = employee.getAge();
+        }
+        if (employee.getSalary() != null) {
+            this.salary = employee.getSalary();
+        }
+        if (employee.getGender() != null) {
+            this.gender = employee.getGender();
+        }
     }
 }

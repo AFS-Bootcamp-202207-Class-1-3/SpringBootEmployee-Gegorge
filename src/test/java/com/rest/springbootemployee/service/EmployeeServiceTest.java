@@ -29,6 +29,7 @@ public class EmployeeServiceTest {
     JpaEmployeeRepository jpaEmployeeRepository;
     @InjectMocks
     EmployeeServiceImpl employeeService;
+
     @Test
     void should_return_all_employee_when_get_all_employees() {
         //given
@@ -72,7 +73,7 @@ public class EmployeeServiceTest {
         //then
         verify(jpaEmployeeRepository).saveAndFlush(originalEmployee);
     }
-    
+
     @Test
     void should_return_employees_by_gender_when_find_employee_by_gender_given_gender() {
         //given
@@ -83,7 +84,7 @@ public class EmployeeServiceTest {
                 new Employee(3, "George3", 23, "male", 90, 100)
         );
         given(jpaEmployeeRepository.findByGender(gender)).willReturn(employees);
-        
+
         //when
         List<Employee> employeesByGender = employeeService.findEmployeesByGender(gender);
 
@@ -111,7 +112,7 @@ public class EmployeeServiceTest {
         //when
         employeeService.deleteEmployeeById(1);
         //then
-        verify(jpaEmployeeRepository,times(1)).deleteById(1);
+        verify(jpaEmployeeRepository, times(1)).deleteById(1);
     }
 
     @Test
@@ -122,13 +123,13 @@ public class EmployeeServiceTest {
                 new Employee(2, "George2", 23, "male", 90, 100),
                 new Employee(3, "George3", 23, "male", 90, 100)
         );
-        PageRequest pageRequest = PageRequest.of(2,2);
+        PageRequest pageRequest = PageRequest.of(2, 2);
         Page<Employee> employeePage = new PageImpl<>(employees, pageRequest, employees.size());
         given(jpaEmployeeRepository.findAll(pageRequest)).willReturn(employeePage);
         //when
-        employeeService.findEmployeeByPage(3,2);
+        employeeService.findEmployeeByPage(3, 2);
         //then
-        verify(jpaEmployeeRepository,times(1)).findAll(pageRequest);
+        verify(jpaEmployeeRepository, times(1)).findAll(pageRequest);
     }
 
 

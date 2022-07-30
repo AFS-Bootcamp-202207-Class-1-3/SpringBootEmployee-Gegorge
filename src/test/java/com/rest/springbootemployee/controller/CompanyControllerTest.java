@@ -1,10 +1,13 @@
 package com.rest.springbootemployee.controller;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.rest.springbootemployee.dto.CompanyRequest;
 import com.rest.springbootemployee.entity.Company;
 import com.rest.springbootemployee.entity.Employee;
 import com.rest.springbootemployee.repository.JpaCompanyRepository;
 import com.rest.springbootemployee.repository.JpaEmployeeRepository;
 import com.rest.springbootemployee.service.CompanyServiceImpl;
+import com.sun.org.apache.regexp.internal.RE;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -59,7 +62,7 @@ public class CompanyControllerTest {
         //when & then
         client.perform(MockMvcRequestBuilders.get("/companies"))
                 .andExpect(MockMvcResultMatchers.status().isOk())
-                .andExpect(MockMvcResultMatchers.jsonPath("$.*",hasSize(3)))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.*", hasSize(3)))
                 .andExpect(MockMvcResultMatchers.jsonPath("$[0].id").value(company1.getId()))
                 .andExpect(MockMvcResultMatchers.jsonPath("$[1].id").value(company2.getId()))
                 .andExpect(MockMvcResultMatchers.jsonPath("$[2].id").value(company3.getId()))
@@ -74,16 +77,15 @@ public class CompanyControllerTest {
     @Test
     void should_create_new_company_when_perform_post_given_new_company() throws Exception {
         //given
-        String newCompany =  "{\n" +
-                "        \"id\": 1,\n" +
-                "        \"companyName\": \"OOCL\",\n" +
-                "        \"employees\": []\n" +
-                "    }";
+        CompanyRequest request = new CompanyRequest();
+        request.setCompanyName("OOCL");
+        request.setEmployees(Collections.emptyList());
+        String requestAsString = new ObjectMapper().writeValueAsString(request);
 
         //when & then
         client.perform(MockMvcRequestBuilders.post("/companies")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(newCompany))
+                        .content(requestAsString))
                 .andExpect(MockMvcResultMatchers.status().isCreated());
 
         //should
@@ -98,7 +100,7 @@ public class CompanyControllerTest {
         Company company1 = jpaCompanyRepository.save(new Company(1, "OOCL", Collections.emptyList()));
         Company company2 = jpaCompanyRepository.save(new Company(22, "IQAX", Collections.emptyList()));
         //when & then
-        client.perform(MockMvcRequestBuilders.get("/companies/{id}",company1.getId()))
+        client.perform(MockMvcRequestBuilders.get("/companies/{id}", company1.getId()))
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(MockMvcResultMatchers.jsonPath("$.companyName").value("OOCL"));
     }
@@ -111,6 +113,7 @@ public class CompanyControllerTest {
         client.perform(MockMvcRequestBuilders.get("/companies/{id}", 1))
                 .andExpect(MockMvcResultMatchers.status().isNotFound());
     }
+
     @Test
     void should_get_companies_by_page_when_perform_given_page_and_pageSize() throws Exception {
         //given
@@ -136,21 +139,22 @@ public class CompanyControllerTest {
     }
 
     @Test
-    void should_update_employee_salary_to_300_by_id_when_perform_given_update_employee() throws Exception {
+    void should_update_company__by_id_when_perform_given_update_company() throws Exception {
         //given
         Company company = jpaCompanyRepository.save(new Company(1, "OOCL", Collections.emptyList()));
-        jpaEmployeeRepository.save(new Employee(1,"George", 18, "male", 333, company.getId()));
-        String newCompany = "{\n" +
-                "        \"id\": "+company.getId()+",\n" +
-                "        \"companyName\": \"IQAX\",\n" +
-                "        \"employees\": []\n" +
-                "    }";
+        jpaEmployeeRepository.save(new Employee(1, "George", 18, "male", 333, company.getId()));
+        CompanyRequest request = new CompanyRequest();
+        request.setCompanyName("IQAX");
+        request.setEmployees(Collections.singletonList(new Employee(2, "George111", 18, "male", 333, company.getId())));
+        String requestAsString = new ObjectMapper().writeValueAsString(request);
         //when & then
-        client.perform(MockMvcRequestBuilders.put("/companies/{id}",company.getId())
+        client.perform(MockMvcRequestBuilders.put("/companies/{id}", company.getId())
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(newCompany))
+                        .content(requestAsString))
                 .andExpect(MockMvcResultMatchers.status().isOk())
-                .andExpect(MockMvcResultMatchers.jsonPath("$.companyName").value("IQAX"));
+                .andExpect(MockMvcResultMatchers.jsonPath("$.companyName").value("IQAX"))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.employees",hasSize(1)))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.employees[0].name").value("George111"));
     }
 
     @Test
@@ -163,6 +167,7 @@ public class CompanyControllerTest {
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(MockMvcResultMatchers.status().isNoContent());
     }
+
     @Test
     void should_get_all_employees_when_perform_given_company_id() throws Exception {
         //given
@@ -171,7 +176,7 @@ public class CompanyControllerTest {
         jpaEmployeeRepository.save(new Employee(2, "George2", 18, "female", 18888, company.getId()));
 
         //when & then
-        client.perform(MockMvcRequestBuilders.get("/companies/{id}/employees",company.getId())
+        client.perform(MockMvcRequestBuilders.get("/companies/{id}/employees", company.getId())
                         .queryParam("gender", "female"))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.size()").value(2))
                 .andExpect(MockMvcResultMatchers.jsonPath("$[0].name").value("George1"))

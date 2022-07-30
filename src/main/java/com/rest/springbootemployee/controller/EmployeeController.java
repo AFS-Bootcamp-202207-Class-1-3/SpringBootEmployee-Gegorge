@@ -18,11 +18,13 @@ public class EmployeeController {
     private EmployeeServiceImpl employeeServiceImpl;
     @Autowired
     private EmployeeMapper employeeMapper;
+
     @GetMapping
     public List<EmployeeResponse> getAllEmployees() {
         List<Employee> employees = employeeServiceImpl.findAllEmployee();
         return employeeMapper.convertToVOs(employees);
     }
+
     @GetMapping(path = "/{id}")
     public EmployeeResponse getEmployeeById(@PathVariable Integer id) {
         Employee employee = employeeServiceImpl.findEmployeeById(id);
@@ -55,7 +57,7 @@ public class EmployeeController {
         employeeServiceImpl.deleteEmployeeById(id);
     }
 
-    @GetMapping(params = {"page","pageSize"})
+    @GetMapping(params = {"page", "pageSize"})
     public List<EmployeeResponse> getEmployeeByPage(@RequestParam int page, int pageSize) {
         List<Employee> employees = employeeServiceImpl.findEmployeeByPage(page, pageSize);
         return employeeMapper.convertToVOs(employees);
