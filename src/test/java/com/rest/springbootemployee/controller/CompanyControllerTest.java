@@ -29,7 +29,6 @@ import static org.hamcrest.Matchers.hasSize;
 
 @AutoConfigureMockMvc
 @SpringBootTest
-@ActiveProfiles("test")
 public class CompanyControllerTest {
     @Autowired
     MockMvc client;
@@ -42,37 +41,34 @@ public class CompanyControllerTest {
     @Autowired
     JpaCompanyRepository jpaCompanyRepository;
 
-    private int initCompanyId;
-
-
     @BeforeEach
-//    @Transactional
     void setupDB() {
         jpaCompanyRepository.deleteAll();
         jpaEmployeeRepository.deleteAll();
-//        jpaCompanyRepository.truncateMyTable();
-        Company company = new Company();
-        company.setCompanyName("OOCL");
-        Company initCompany = jpaCompanyRepository.save(company);
-        initCompanyId = initCompany.getId();
     }
-
-//    @AfterEach
-//    void clear() {
-//        jpaCompanyRepository.deleteAll();
-//        jpaEmployeeRepository.deleteAll();
-//    }
 
     @Test
     void should_get_all_companies_when_perform_given_companies() throws Exception {
         //given
-
+        Company company1 = jpaCompanyRepository.save(new Company(1, "OOCL", Collections.emptyList()));
+        Company company2 = jpaCompanyRepository.save(new Company(2, "CargoSmart", Collections.emptyList()));
+        Company company3 = jpaCompanyRepository.save(new Company(3, "IQAX", Collections.emptyList()));
+        jpaEmployeeRepository.save(new Employee(null, "George1", 18, "male", 333, company1.getId()));
+        jpaEmployeeRepository.save(new Employee(null, "George2", 18, "male", 333, company2.getId()));
+        jpaEmployeeRepository.save(new Employee(null, "George3", 18, "male", 333, company3.getId()));
         //when & then
         client.perform(MockMvcRequestBuilders.get("/companies"))
                 .andExpect(MockMvcResultMatchers.status().isOk())
-                .andExpect(MockMvcResultMatchers.jsonPath("$.*",hasSize(1)))
-                .andExpect(MockMvcResultMatchers.jsonPath("$[0].id").value(initCompanyId))
-                .andExpect(MockMvcResultMatchers.jsonPath("$[0].companyName").value("OOCL"));
+                .andExpect(MockMvcResultMatchers.jsonPath("$.*",hasSize(3)))
+                .andExpect(MockMvcResultMatchers.jsonPath("$[0].id").value(company1.getId()))
+                .andExpect(MockMvcResultMatchers.jsonPath("$[1].id").value(company2.getId()))
+                .andExpect(MockMvcResultMatchers.jsonPath("$[2].id").value(company3.getId()))
+                .andExpect(MockMvcResultMatchers.jsonPath("$[0].companyName").value("OOCL"))
+                .andExpect(MockMvcResultMatchers.jsonPath("$[1].companyName").value("CargoSmart"))
+                .andExpect(MockMvcResultMatchers.jsonPath("$[2].companyName").value("IQAX"))
+                .andExpect(MockMvcResultMatchers.jsonPath("$[0].employees[0].name").value("George1"))
+                .andExpect(MockMvcResultMatchers.jsonPath("$[1].employees[0].name").value("George2"))
+                .andExpect(MockMvcResultMatchers.jsonPath("$[2].employees[0].name").value("George3"));
     }
 
     @Test
@@ -99,9 +95,10 @@ public class CompanyControllerTest {
     @Test
     void should_get_company_by_id_when_perform_given_company_id() throws Exception {
         //given
-       jpaCompanyRepository.save(new Company(22,"IQAX", Collections.emptyList()));
+        Company company1 = jpaCompanyRepository.save(new Company(1, "OOCL", Collections.emptyList()));
+        Company company2 = jpaCompanyRepository.save(new Company(22, "IQAX", Collections.emptyList()));
         //when & then
-        client.perform(MockMvcRequestBuilders.get("/companies/{id}",initCompanyId))
+        client.perform(MockMvcRequestBuilders.get("/companies/{id}",company1.getId()))
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(MockMvcResultMatchers.jsonPath("$.companyName").value("OOCL"));
     }
@@ -109,10 +106,9 @@ public class CompanyControllerTest {
     @Test
     void should_throw_no_such_company_exception_when_perform_given_wrong_company_id() throws Exception {
         //given
-        jpaCompanyRepository.deleteAll();
-        Company company = jpaCompanyRepository.save(new Company(1, "OOCL", Collections.emptyList()));
+
         //when & then
-        client.perform(MockMvcRequestBuilders.get("/companies/{id}",company.getId() + 1))
+        client.perform(MockMvcRequestBuilders.get("/companies/{id}", 1))
                 .andExpect(MockMvcResultMatchers.status().isNotFound());
     }
     @Test
@@ -122,8 +118,6 @@ public class CompanyControllerTest {
         jpaCompanyRepository.save(new Company(2, "IQAX", Collections.emptyList()));
         Company company = jpaCompanyRepository.save(new Company(3, "OOIL", Collections.emptyList()));
 
-
-        //when & then
         client.perform(MockMvcRequestBuilders.get("/companies")
                         .queryParam("page", "2").queryParam("pageSize", "2"))
                 .andExpect(MockMvcResultMatchers.status().isOk())
@@ -133,45 +127,60 @@ public class CompanyControllerTest {
     }
 
     @Test
+    void should_throw_no_such_company_exception_when_perform_given_wrong_companyId() throws Exception {
+        //given
+
+        //when & then
+        client.perform(MockMvcRequestBuilders.get("/employees/{id}", 1))
+                .andExpect(MockMvcResultMatchers.status().isNotFound());
+    }
+
+    @Test
     void should_update_employee_salary_to_300_by_id_when_perform_given_update_employee() throws Exception {
         //given
+        Company company = jpaCompanyRepository.save(new Company(1, "OOCL", Collections.emptyList()));
+        jpaEmployeeRepository.save(new Employee(1,"George", 18, "male", 333, company.getId()));
         String newCompany = "{\n" +
-                "        \"id\": 2,\n" +
+                "        \"id\": "+company.getId()+",\n" +
                 "        \"companyName\": \"IQAX\",\n" +
                 "        \"employees\": []\n" +
                 "    }";
         //when & then
-        client.perform(MockMvcRequestBuilders.put("/companies/{id}",initCompanyId)
+        client.perform(MockMvcRequestBuilders.put("/companies/{id}",company.getId())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(newCompany))
                 .andExpect(MockMvcResultMatchers.status().isOk())
-                .andExpect(MockMvcResultMatchers.jsonPath("$.id").value(2))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.companyName").value("IQAX"));
     }
 
     @Test
     void should_delete_company_by_id_when_perform_given_delete_company_id() throws Exception {
         //given
-
+        Company company = jpaCompanyRepository.save(new Company(1, "OOCL", Collections.emptyList()));
 
         //when & then
-        client.perform(MockMvcRequestBuilders.delete("/companies/{id}", initCompanyId)
+        client.perform(MockMvcRequestBuilders.delete("/companies/{id}", company.getId())
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(MockMvcResultMatchers.status().isNoContent());
     }
     @Test
     void should_get_all_employees_when_perform_given_company_id() throws Exception {
         //given
-        jpaEmployeeRepository.save(new Employee(1, "George1", 18, "male", 188, initCompanyId));
+        Company company = jpaCompanyRepository.save(new Company(1, "OOCL", Collections.emptyList()));
+        jpaEmployeeRepository.save(new Employee(1, "George1", 18, "male", 188, company.getId()));
+        jpaEmployeeRepository.save(new Employee(2, "George2", 18, "female", 18888, company.getId()));
 
         //when & then
-        client.perform(MockMvcRequestBuilders.get("/companies/{id}/employees",initCompanyId)
+        client.perform(MockMvcRequestBuilders.get("/companies/{id}/employees",company.getId())
                         .queryParam("gender", "female"))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.size()").value(1))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.size()").value(2))
                 .andExpect(MockMvcResultMatchers.jsonPath("$[0].name").value("George1"))
+                .andExpect(MockMvcResultMatchers.jsonPath("$[1].name").value("George2"))
                 .andExpect(MockMvcResultMatchers.jsonPath("$[0].age").value(18))
                 .andExpect(MockMvcResultMatchers.jsonPath("$[0].gender").value("male"))
-                .andExpect(MockMvcResultMatchers.jsonPath("$[0].salary").value(188));
+                .andExpect(MockMvcResultMatchers.jsonPath("$[1].gender").value("female"))
+                .andExpect(MockMvcResultMatchers.jsonPath("$[0].salary").value(188))
+                .andExpect(MockMvcResultMatchers.jsonPath("$[1].salary").value(18888));
     }
 
 }

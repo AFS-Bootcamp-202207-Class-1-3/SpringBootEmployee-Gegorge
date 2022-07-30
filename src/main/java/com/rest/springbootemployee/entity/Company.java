@@ -37,9 +37,8 @@ public class Company {
         this.companyName = companyName;
     }
 
-    public Company merge(Company company) {
+    public void merge(Company company) {
         this.setCompanyName(company.getCompanyName());
         this.employees = company.getEmployees();
-        return this;
     }
 }

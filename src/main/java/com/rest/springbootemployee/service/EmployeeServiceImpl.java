@@ -33,7 +33,7 @@ public class EmployeeServiceImpl {
 
 
     public Employee updateEmployee(Integer id, Employee updateEmployee) {
-        Employee employee = jpaEmployeeRepository.findById(id).orElseThrow(NoSuchEmployeeException::new);
+        Employee employee = findEmployeeById(id);
         employee.merge(updateEmployee);
         return jpaEmployeeRepository.saveAndFlush(employee);
     }

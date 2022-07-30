@@ -39,7 +39,7 @@ public class EmployeeControllerTest {
     @Autowired
     JpaCompanyRepository jpaCompanyRepository;
 
-    private int initCompanyId;
+    private Integer initCompanyId;
 
 
     @BeforeEach
@@ -114,7 +114,7 @@ public class EmployeeControllerTest {
         employeeServiceImpl.addEmployee(
                 new Employee(2, "George", 18, "male", 190,initCompanyId));
         //when & then
-        client.perform(MockMvcRequestBuilders.get("/employees/2"))
+        client.perform(MockMvcRequestBuilders.get("/employees/{id}", 3))
                 .andExpect(MockMvcResultMatchers.status().isNotFound());
     }
 
